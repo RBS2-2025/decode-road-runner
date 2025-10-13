@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.test;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
@@ -10,26 +11,20 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 public class DelayTest extends LinearOpMode {
 
     NormalizedColorSensor c1, c2, c3;
-    private DcMotor Dc;
+    private Servo servo;
 
 
     public boolean findWhite(NormalizedColorSensor sensor){
         NormalizedRGBA colors = sensor.getNormalizedColors();
 
-        float normRed = colors.red / colors.alpha;
-        float normGreen = colors.green / colors.alpha;
-        float normBlue = colors.blue / colors.alpha;
+        telemetry.addData("alpha", colors.alpha);
 
-        telemetry.addData("R", normRed);
-        telemetry.addData("G", normGreen);
-        telemetry.addData("B", normBlue);
-
-        return normRed > 0.9 && normGreen > 0.9 && normBlue > 0.9;
+        return colors.alpha > 0.9 ;
     }
 
     @Override
     public void runOpMode() {
-        Dc = hardwareMap.get(DcMotor.class, "Dc");
+        servo = hardwareMap.get(Servo.class, "servo");
         c1 = hardwareMap.get(NormalizedColorSensor.class, "c1");
         c2 = hardwareMap.get(NormalizedColorSensor.class, "c2");
         c3 = hardwareMap.get(NormalizedColorSensor.class, "c3");
@@ -50,14 +45,18 @@ public class DelayTest extends LinearOpMode {
 
 
             if (w1 && w2 && w3) {
-                Dc.setPower(1.0);
+                servo.setDirection(Servo.Direction.FORWARD);
+                servo.setPosition(2);
+
 
             } else if(w1 || w2 || w3) {
+                servo.setDirection(Servo.Direction.REVERSE);
+                servo.setPosition(2);
 
-                Dc.setPower(-1);
 
             } else {
-                Dc.setPower(0);
+                servo.setPosition(0);
+
             }
 
             telemetry.update();
