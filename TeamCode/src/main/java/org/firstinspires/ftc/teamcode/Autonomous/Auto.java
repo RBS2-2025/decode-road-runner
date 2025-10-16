@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.acmerobotics.roadrunner.action.Action;
-import com.acmerobotics.roadrunner.action.InstantAction;   // v1 RR에서 제공
-import com.acmerobotics.roadrunner.action.SleepAction;    // (선택) 잠깐 대기 액션
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -24,72 +24,48 @@ public final class Auto extends LinearOpMode {
     private static final Vector2d P4 = new Vector2d( 24,  12);
 
     // 하드웨어 (예시)
-    private Servo claw;
-    private DcMotor intakeMotor;
+    private Servo in_takeServo;
+    private DcMotor out_takeDc;
 
     // -------- 액추에이터 액션 정의(InstantAction 추천) --------
     private Action intakeOn() {
         return new InstantAction(() -> {
-            intakeMotor.setPower(1.0);
+            in_takeServo.setPosition(1.0);
         });
     }
 
     private Action intakeOff() {
         return new InstantAction(() -> {
-            intakeMotor.setPower(0.0);
+            in_takeServo.setPosition(0.0);
         });
     }
 
-    private Action clawOpen() {
-        return new InstantAction(() -> claw.setPosition(0.8));
-    }
+    // sorting system을 비롯한 다양한 동작 함수 작성
 
-    private Action clawClose() {
-        return new InstantAction(() -> claw.setPosition(0.2));
-    }
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         // 드라이브 & 하드웨어 초기화
         MecanumDrive drive = new MecanumDrive(hardwareMap, START_POSE);
-        claw = hardwareMap.get(Servo.class, "claw");
-        intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+        in_takeServo = hardwareMap.get(Servo.class, "in_takeServo");
+        out_takeDc = hardwareMap.get(DcMotor.class,"out_takeDc");
 
-        claw.setPosition(0.2);
-        intakeMotor.setPower(0.0);
 
         waitForStart();
         if (isStopRequested()) return;
 
         // -------- 주행 + 시간 마커(afterTime) 예시 --------
         Action routine = drive.actionBuilder(START_POSE)
-                // 첫 번째 수거 지점으로 스플라인
                 .splineTo(P1, Math.PI/2)
-
-                // 주행 시작 후 0.3초 뒤 인테이크 ON
                 .afterTime(0.3, intakeOn())
-
-                // 두 번째 지점
                 .splineTo(P2, Math.PI/2)
-
-                // 주행 시작 후 1.2초가 지난 시점에 집게 열기
-                .afterTime(1.2, clawOpen())
-
-                // 세 번째 지점
+                .afterTime(1.2, intakeOn())
                 .splineTo(P3, Math.PI/2)
-
-                // 필요하면 현재 시점에서 잠깐 대기하는 액션을 삽입 (정밀 픽업 등)
                 .stopAndAdd(new SleepAction(0.2))
-
-                // 네 번째 지점
                 .splineTo(P4, Math.PI/2)
-
-                // 주행 시작 후 2.7초에 인테이크 OFF + 집게 닫기 (동시에 예약 가능)
                 .afterTime(2.7, intakeOff())
-                .afterTime(2.7, clawClose())
-
-                // 파킹으로 이동
+                .afterTime(2.7, intakeOn())
                 .splineTo(new Vector2d(36, 12), 0.0)
 
                 .build();
