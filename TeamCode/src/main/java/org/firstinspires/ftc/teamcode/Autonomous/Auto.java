@@ -30,13 +30,13 @@ public final class Auto extends LinearOpMode {
     // -------- 액추에이터 액션 정의(InstantAction 추천) --------
     private Action intakeOn() {
         return new InstantAction(() -> {
-            in_takeServo.setPosition(1.0);
+
         });
     }
 
     private Action intakeOff() {
         return new InstantAction(() -> {
-            in_takeServo.setPosition(0.0);
+
         });
     }
 
