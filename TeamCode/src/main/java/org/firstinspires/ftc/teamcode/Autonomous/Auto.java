@@ -94,6 +94,11 @@ public final class Auto extends LinearOpMode {
                 // 2차 발사
                 .splineTo(G2, Math.PI/4)
                 .stopAndAdd(align())
+                .afterTime(0.5,sorting())
+                .stopAndAdd(out_take())
+                .afterTime(0.5,sorting())
+                .stopAndAdd(out_take())
+                .afterTime(0.5,sorting())
                 .stopAndAdd(out_take())
 
                //3차 수집
@@ -104,6 +109,11 @@ public final class Auto extends LinearOpMode {
                 // 3차 발사
                 .splineTo(G2, Math.PI/4)
                 .stopAndAdd(align())
+                .afterTime(0.5,sorting())
+                .stopAndAdd(out_take())
+                .afterTime(0.5,sorting())
+                .stopAndAdd(out_take())
+                .afterTime(0.5,sorting())
                 .stopAndAdd(out_take())
 
                 // 시간 체크 후 human player zone까지 들어가서 체크(들어가는 공 갯수랑 정확도도 보면서 이후 로직 정해야할듯)
