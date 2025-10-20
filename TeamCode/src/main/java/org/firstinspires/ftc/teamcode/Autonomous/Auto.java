@@ -73,6 +73,7 @@ public final class Auto extends LinearOpMode {
         Action routine = drive.actionBuilder(START_POSE)
                 //보관 중인 Artifact 발사
                 .splineTo(G1, Math.PI/4)
+                .afterTime(0.1,sorting())
                 .stopAndAdd(align())
                 .stopAndAdd(out_take())
 
