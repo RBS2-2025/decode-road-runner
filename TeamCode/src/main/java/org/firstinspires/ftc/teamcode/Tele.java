@@ -54,6 +54,8 @@ import java.util.concurrent.TimeUnit;
 
             if(C1.red()>100 && C1.green()>100 && C1.blue()>100){ // 측정 필요
                 cheC1 = 1;
+                IN_R.setPosition(0);
+                IN_L.setPosition(0);
             }
 
         }else if(cheC2==0 && cheC1 != 0) {
@@ -70,6 +72,8 @@ import java.util.concurrent.TimeUnit;
 
             if(C2.red()>100 && C2.green()>100 && C2.blue()>100){ // 측정 필요
                 cheC2 = 1;
+                IN_R.setPosition(0);
+                IN_L.setPosition(0);
             }
         } else if(cheC3 == 0 && cheC2 != 0) {
             ROT_R.setPosition(1);//각도 측정 필요
@@ -85,6 +89,8 @@ import java.util.concurrent.TimeUnit;
 
             if(C3.red()>100 && C3.green()>100 && C3.blue()>100){ // 측정 필요
                 cheC3 = 1;
+                IN_R.setPosition(0);
+                IN_L.setPosition(0);
             }
         }
     }
