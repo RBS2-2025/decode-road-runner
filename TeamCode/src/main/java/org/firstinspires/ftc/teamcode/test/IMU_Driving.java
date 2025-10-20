@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class IMU_D {
+public class IMU_Driving {
     public class Vector{
         public double x,y;
         public Vector(double x, double y){
@@ -16,7 +16,7 @@ public class IMU_D {
             this.y = y;
         }
     }
-    public IMU_D(DcMotor fl, DcMotor fr, DcMotor rl, DcMotor rr, IMU imu, Telemetry telemetry, Gamepad gamepad){
+    public IMU_Driving(DcMotor fl, DcMotor fr, DcMotor rl, DcMotor rr, IMU imu, Telemetry telemetry, Gamepad gamepad){
         this.fl = fl;
         this.fr = fr;
         this.rl = rl;
