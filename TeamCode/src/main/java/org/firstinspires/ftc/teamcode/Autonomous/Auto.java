@@ -18,9 +18,9 @@ public final class Auto extends LinearOpMode {
 
     // 예시 좌표 (인치, 헤딩 라디안)
     private static final Pose2d START_POSE = new Pose2d(-72, 0, Math.PI/2);
-    private static final Vector2d P1 = new Vector2d(-36,  36);
-    private static final Vector2d P2 = new Vector2d(-12,  36);
-    private static final Vector2d P3 = new Vector2d(  12,  36);
+    private static final Vector2d P1 = new Vector2d(-36,  -36);
+    private static final Vector2d P2 = new Vector2d(-12,  -36);
+    private static final Vector2d P3 = new Vector2d(  12,  -36);
     private static final Vector2d G1 = new Vector2d( -48,  0);
     private static final Vector2d G2 = new Vector2d( 0,  0);
 
@@ -78,7 +78,7 @@ public final class Auto extends LinearOpMode {
 
                 // 1차 먹기(패턴에 따라서 p1, p2, p3 변경)
                 .splineTo(P1, Math.PI)
-                .splineToConstantHeading(new Vector2d(-36, 48), Math.PI)
+                .splineToConstantHeading(new Vector2d(-36, -48), Math.PI)
                 .afterTime(0.3, intakeOn())
 
                 // 1차 발사
@@ -88,7 +88,7 @@ public final class Auto extends LinearOpMode {
 
                 //2차 수집
                 .splineTo(P2, Math.PI)
-                .splineToConstantHeading(new Vector2d(-12, 48), Math.PI)
+                .splineToConstantHeading(new Vector2d(-12, -48), Math.PI)
                 .afterTime(0.3, intakeOn()) // aftertime 은 배터리의 상태에 영향을 받거나 오차가 생길 수도 있어서 afterDisp(), 거리 관련 함수로 사용할 방법도 찾아야함
 
                 // 2차 발사
@@ -103,7 +103,7 @@ public final class Auto extends LinearOpMode {
 
                //3차 수집
                 .splineTo(P3, Math.PI)
-                .splineToConstantHeading(new Vector2d(-12, 48), Math.PI)
+                .splineToConstantHeading(new Vector2d(-12, -48), Math.PI)
                 .afterTime(0.3, intakeOn())
 
                 // 3차 발사
