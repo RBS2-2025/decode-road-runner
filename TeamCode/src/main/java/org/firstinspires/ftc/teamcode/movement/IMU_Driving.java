@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.movement;
 
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -9,13 +10,7 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class IMU_Driving {
-    public class Vector{
-        public double x,y;
-        public Vector(double x, double y){
-            this.x = x;
-            this.y = y;
-        }
-    }
+
     public IMU_Driving(DcMotor fl, DcMotor fr, DcMotor rl, DcMotor rr, IMU imu, Telemetry telemetry, Gamepad gamepad){
         this.fl = fl;
         this.fr = fr;
@@ -77,17 +72,17 @@ public class IMU_Driving {
         return rx;
     }
 
-    public Vector getMovePower(){
+    public Vector2d getMovePower(){
         double x,y;
         x = gamepad.left_stick_x;
         y = -gamepad.left_stick_y;
 
-        return new Vector(x,y);
+        return new Vector2d(x,y);
     }
 
     public void move(){
         double rx = getRotatePower();
-        Vector moveVec = getMovePower();
+        Vector2d moveVec = getMovePower();
         double deno = JavaUtil.maxOfList(
                 JavaUtil.createListWith(
                         Math.abs(moveVec.x),
