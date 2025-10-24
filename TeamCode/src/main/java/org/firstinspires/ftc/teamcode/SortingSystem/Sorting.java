@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Sorting")
 public class Sorting extends LinearOpMode {
-    private NormalizedColorSensor c1, c2, c3;
-    private CRServo rotateWheel;
-    private Servo casement1, casement2;
+    public NormalizedColorSensor c1, c2, c3;
+    public CRServo rotateWheel;
+    public Servo casement1, casement2;
     public static final double GREEN_R = 0.2; // 초록색으로 판단하기 위한 R G B
     public static final double GREEN_G = 0.55;
     public static final double GREEN_B = 0.25;
@@ -53,7 +53,7 @@ public class Sorting extends LinearOpMode {
 
     }
     //Threshold로 오차 범위 1 +- .n% 적용해 Green 색상 판별
-    private boolean IsGreen(NormalizedRGBA colors){
+    public boolean IsGreen(NormalizedRGBA colors){
         if ((GREEN_R*(1+ColorThreshold) >= colors.red)&&(colors.red >= GREEN_R*(1-ColorThreshold))){
             if ((GREEN_G*(1+ColorThreshold) >= colors.green)&&(colors.green >= GREEN_G*(1-ColorThreshold))){
                 if ((GREEN_B*(1+ColorThreshold) >= colors.blue)&&(colors.blue >= GREEN_B*(1-ColorThreshold))){
@@ -64,7 +64,7 @@ public class Sorting extends LinearOpMode {
         return false;
     }
     //Threshold로 오차 범위 1 +- .n% 적용해 Purple 색상 판별
-    private boolean IsPurple(NormalizedRGBA colors){
+    public boolean IsPurple(NormalizedRGBA colors){
         if ((PURPLE_R*(1+ColorThreshold) >= colors.red)&&(colors.red >= PURPLE_R*(1-ColorThreshold))){
             if ((PURPLE_G*(1+ColorThreshold) >= colors.green)&&(colors.green >= PURPLE_G*(1-ColorThreshold))){
                 if ((PURPLE_B*(1+ColorThreshold) >= colors.blue)&&(colors.blue >= PURPLE_B*(1-ColorThreshold))){
@@ -76,7 +76,7 @@ public class Sorting extends LinearOpMode {
     }
 
     //각 모터들 Activate에 칸 회전 제어용 reverse (+-)
-    private void Casement_Activate(Servo casement, boolean reverse) {
+    public void Casement_Activate(Servo casement, boolean reverse) {
         if (reverse) {
             casement.setPosition(Servos_Rotation_Angle);
         } else {
@@ -85,7 +85,7 @@ public class Sorting extends LinearOpMode {
 
     }
 
-    private void RotateWheel_Activate(boolean reverse) {
+    public void RotateWheel_Activate(boolean reverse) {
         Rotating_time.reset();
         if (reverse) {
             rotateWheel.setPower(-1);
@@ -97,7 +97,7 @@ public class Sorting extends LinearOpMode {
         }
     }
 
-    private boolean TimeCheck(double Duration) {
+    public boolean TimeCheck(double Duration) {
         ElapsedTime time = new ElapsedTime();
         while (time.seconds() < Duration) {
             return false;
@@ -105,7 +105,7 @@ public class Sorting extends LinearOpMode {
         return true;
 
     }
-    private void Sort(int Color_Value) { //Color_Value는 0,1(초록,보라) 사용
+    public void Sort(int Color_Value) { //Color_Value는 0,1(초록,보라) 사용
         //Color detecting 파트
         int Detected1 = findColor(c1);
         int Detected2 = findColor(c2);

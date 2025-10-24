@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.SortingSystem.Sorting;
 
 @Autonomous(name = "Auto_Actions_AfterTime")
 public final class Auto extends LinearOpMode {
@@ -24,6 +25,7 @@ public final class Auto extends LinearOpMode {
     private static final Vector2d G1 = new Vector2d( -48,  0);
     private static final Vector2d G2 = new Vector2d( 0,  0);
 
+    Sorting sorting = new Sorting();
 
     // 하드웨어 (예시)
     private Servo servo;
