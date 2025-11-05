@@ -45,7 +45,7 @@ import org.firstinspires.ftc.teamcode.Vision.vision;
         if (opModeIsActive()) {
 
             while (opModeIsActive()) {
-                //imu_driving.move();
+                imu_driving.move();
 
 
                 if (gamepad2.a) {
@@ -67,7 +67,9 @@ import org.firstinspires.ftc.teamcode.Vision.vision;
                 if (gamepad2.y) {
                     vision.align();
                 }
-
+                if(gamepad2.x){
+                    vision.decode();
+                }
 
 
                     telemetry.update();
