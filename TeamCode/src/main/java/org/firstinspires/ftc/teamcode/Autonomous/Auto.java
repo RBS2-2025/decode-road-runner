@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,7 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Movement.Action;
+import org.firstinspires.ftc.teamcode.Movement.ActionManaging;
 import org.firstinspires.ftc.teamcode.Vision.vision;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
@@ -43,7 +42,7 @@ public final class Auto extends LinearOpMode {
     IMU imu;
     // IMU_Driving imu_driving;
     vision vision;
-    org.firstinspires.ftc.teamcode.Movement.Action action;
+    ActionManaging action;
     ElapsedTime timer;
     private boolean In_wasPressed = false;
     private boolean Out_wasPressed = false;

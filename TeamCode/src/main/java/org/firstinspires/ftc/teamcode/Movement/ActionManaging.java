@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Action {
+public class ActionManaging {
 
     Servo lifting;
     DcMotor Turret_R,Turret_L,Turret_M , IntakeDc;

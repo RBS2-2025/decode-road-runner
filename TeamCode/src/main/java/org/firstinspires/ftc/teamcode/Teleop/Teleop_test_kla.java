@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,11 +10,10 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Movement.Action;
+import org.firstinspires.ftc.teamcode.Movement.ActionManaging;
 import org.firstinspires.ftc.teamcode.Movement.IMU_Driving;
 import org.firstinspires.ftc.teamcode.Vision.vision;
 
-import java.util.concurrent.TimeUnit;
 @TeleOp(name = "Tele")public class Teleop_test_kla extends LinearOpMode {
     Servo lifting;
     DcMotor Turret_R, Turret_L, Turret_M, IntakeDc, fl, fr, rl, rr;
@@ -27,7 +24,7 @@ import java.util.concurrent.TimeUnit;
     IMU imu;
     IMU_Driving imu_driving;
     vision vision;
-    Action action;
+    ActionManaging action;
     ElapsedTime timer;
     private boolean In_wasPressed = false;
     private boolean Out_wasPressed = false;
@@ -36,7 +33,7 @@ import java.util.concurrent.TimeUnit;
     @Override
     public void runOpMode() {
 
-        action = new Action();
+        action = new ActionManaging();
         vision = new vision();
         imu_driving = new IMU_Driving(fl,fr,rl, rr, imu, telemetry,gamepad1);
         waitForStart();
