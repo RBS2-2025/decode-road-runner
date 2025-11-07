@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class IMU_Driving {
@@ -45,10 +44,10 @@ public class IMU_Driving {
 
     public void resetYaw(StartPos pos){
         if(pos == StartPos.BLUE_L || pos == StartPos.RED_R){ //반시게방향 90도 회전
-            rotate(90);
+            rotate2Deg(90);
         }
         else if(pos == StartPos.BLUE_R || pos == StartPos.RED_L){// 시계방향 90도 회전
-            rotate(-90);
+            rotate2Deg(-90);
         }
         else{
             return;
@@ -57,104 +56,90 @@ public class IMU_Driving {
         imu.resetYaw();
     }
 
-    public double rotaeSlowThreshold = 50;
-    public double gamepadRotate(){
-        double x = gamepad1.right_stick_x;
-        double y =  -gamepad1.right_stick_y;
+    public double rotateSlowThreshold = 50;
 
-        double targetYaw = -Math.toDegrees(Math.atan2(x,y));
-        getYaw();
-
-        if(Math.abs(x) <= 0.1 && Math.abs(y)  <= 0.1){
-            return 0;
-        }
-
-
-        return getRotatePower(targetYaw);
-    }
+    /**
+     * GET YAW!!
+     * @param targetYaw 타켓 각도
+     * @return rx
+     */
     public double getRotatePower(double targetYaw){
-        double yawDistance = targetYaw - yaw;
-        if(Math.abs(yawDistance) > 180){
-            yawDistance -= Math.signum(yawDistance) * 360;
+        //yaw 거리 전처리
+        double yawDist = targetYaw - getYaw(); //GetYaw !!
+        if(Math.abs(yawDist) > 180){
+            yawDist -= Math.signum(yawDist) * 360;
         }
-
         double rx;
-        if(Math.abs(yawDistance) > rotaeSlowThreshold){
-            rx = Math.signum(yawDistance);
+        if(Math.abs(yawDist) > rotateSlowThreshold){//거리가 임계값 이상 이면
+            rx = Math.signum(yawDist); //rx = 최대(1)
         }
         else{
-            rx = yawDistance/rotaeSlowThreshold;
+            rx = yawDist/ rotateSlowThreshold; // 거리가 임계값 이하면 거리에 반비례해 1~0
+        }
+
+        return rx;
+    }
+
+    /**
+     *
+     * @param targetYaw 타겟 각도
+     * @see IMU_Driving#getRotatePower(double) 
+     */
+    public void rotate2Deg(double targetYaw){
+        double rx;
+        do {
+            rx = getRotatePower(targetYaw);
+            fl.setPower(rx * speed);
+            fr.setPower(-rx  * speed);
+            rl.setPower(rx  * speed);
+            rr.setPower(-rx  * speed);
+        }while(Math.abs(rx) > 0.01);
+    }
+
+    public void getGamepad(GamepadPurpose p){
+        if(p == GamepadPurpose.MOVE){
+
+        }
+        else if(p == GamepadPurpose.ROTATE){
+            double x = gamepad1.right_stick_x;
+            double y = -gamepad1.right_stick_y;
+            double targetYaw = Math.atan2(x,y); // 90도 회전 (위 -> 0)
 
         }
 
-        telemetry.addData("rx: ",rx);
-        telemetry.addData("yawD: ", yawDistance);
-        telemetry.addData("target: ", targetYaw);
-        return -rx;
     }
 
-    public Vector2d getMovePower(){
-        double rad = -Math.toRadians(getYaw());
-        double x,y,a,b;
-        x = gamepad1.left_stick_x;
-        y = -gamepad1.left_stick_y;
+    /**
+     * GetYaw!!
+     * @return (dx,dy) - 이동 방향
+     */
+    Vector2d getMovePower(){
+        double x = gamepad1.left_stick_x;
+        double y = -gamepad1.left_stick_y;
+        double radian = Math.toRadians(-getYaw()); // 라디안 계산 때는 정방향 필요
 
-        a = x * Math.cos(rad) + y * Math.sin(rad);
-        b = x * -Math.sin(rad) + y * Math.cos(rad);
+        double a = x * Math.cos(radian) + y * Math.sin(radian);
+        double b = x * -Math.sin(radian) + y * Math.cos(radian);
 
         if(Math.abs(a) < 0.00000025) a = 0;
         if(Math.abs(b) < 0.00000025) b = 0;
-
         return new Vector2d(a,b);
     }
 
-    public void move(){
-        if(gamepad1.left_stick_x <= 0.1 && gamepad1.left_stick_y <= 0.1 && gamepad1.right_stick_x <= 0.1) return;
-        double rx = gamepadRotate();
-        Vector2d moveVec = getMovePower();
-        double deno = JavaUtil.maxOfList(
-                JavaUtil.createListWith(
-                        Math.abs(moveVec.x),
-                        Math.abs(moveVec.y),
-                        Math.abs(rx),
-                        1));
-
-        fl.setPower((-moveVec.x + moveVec.y +rx) / deno * speed);
-        fr.setPower((moveVec.x + moveVec.y -rx) / deno * speed);
-        rl.setPower((moveVec.x + moveVec.y +rx) / deno * speed);
-        rr.setPower((-moveVec.x + moveVec.y -rx) / deno * speed);
-
-    }
-
-    public void rotate(double targetYaw){
-        double rx = getRotatePower(targetYaw);
-        while(Math.abs(rx) > 0){
-            fl.setPower(rx * speed);
-            fr.setPower(-rx  * speed);
-            rl.setPower(rx  * speed);
-            rr.setPower(-rx  * speed);
-        }
-
-    }
-
-    public void rota(){
-        double rx = gamepadRotate();
-        while(Math.abs(rx) > 0){
-            fl.setPower(rx * speed);
-            fr.setPower(-rx  * speed);
-            rl.setPower(rx  * speed);
-            rr.setPower(-rx  * speed);
-        }
-
-    }
 
 
-    public enum StartPos{
 
+
+
+    enum StartPos{
         BLUE_L, //작은 삼각형(런치 존)
         BLUE_R, //큰 삼각형(런치 존)
         RED_L, //큰 삼각형(런치 존)
         RED_R; //작은 삼각형(런치 존)
+    }
+    enum GamepadPurpose{
+        MOVE,
+        ROTATE;
     }
 
 }
