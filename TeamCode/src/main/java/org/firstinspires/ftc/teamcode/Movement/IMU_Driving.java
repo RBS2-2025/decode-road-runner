@@ -109,6 +109,7 @@ public class IMU_Driving {
     }
 
     public void move(){
+        if(gamepad1.left_stick_x <= 0.1 && gamepad1.left_stick_y <= 0.1 && gamepad1.right_stick_x <= 0.1) return;
         double rx = gamepadRotate();
         Vector2d moveVec = getMovePower();
         double deno = JavaUtil.maxOfList(
@@ -127,6 +128,17 @@ public class IMU_Driving {
 
     public void rotate(double targetYaw){
         double rx = getRotatePower(targetYaw);
+        while(Math.abs(rx) > 0){
+            fl.setPower(rx * speed);
+            fr.setPower(-rx  * speed);
+            rl.setPower(rx  * speed);
+            rr.setPower(-rx  * speed);
+        }
+
+    }
+
+    public void rota(){
+        double rx = gamepadRotate();
         while(Math.abs(rx) > 0){
             fl.setPower(rx * speed);
             fr.setPower(-rx  * speed);
