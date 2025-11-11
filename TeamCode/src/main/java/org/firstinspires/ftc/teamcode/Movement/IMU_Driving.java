@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class IMU_Driving {
@@ -24,7 +25,7 @@ public class IMU_Driving {
     Telemetry telemetry;
     Gamepad gamepad1;
 
-    public double speed = 1;
+    public double speed = 0.7;
     double yaw;
 
     public void init(){
@@ -77,7 +78,8 @@ public class IMU_Driving {
             rx = yawDist/ rotateSlowThreshold; // 거리가 임계값 이하면 거리에 반비례해 1~0
         }
 
-        return rx;
+        telemetry.addData("rotate: ", targetYaw + "/" + -rx + "/" + yawDist);
+        return -rx;
     }
 
     /**
@@ -96,17 +98,42 @@ public class IMU_Driving {
         }while(Math.abs(rx) > 0.01);
     }
 
-    public void getGamepad(GamepadPurpose p){
-        if(p == GamepadPurpose.MOVE){
+    public void controlWithPad(GamepadPurpose p){
+        double rx = 0;
+        double mX = 0;
+        double mY = 0;
 
-        }
-        else if(p == GamepadPurpose.ROTATE){
+        //rotate: right stick
+        if(p == GamepadPurpose.ROTATE || p == GamepadPurpose.WHOLE && !(Math.abs(gamepad1.right_stick_x) < 0.1 && Math.abs(gamepad1.right_stick_y) < 0.1)){
             double x = gamepad1.right_stick_x;
             double y = -gamepad1.right_stick_y;
-            double targetYaw = Math.atan2(x,y); // 90도 회전 (위 -> 0)
-
+            telemetry.addData("move: ", x + "/" + y );
+            double targetYaw = -Math.toDegrees(Math.atan2(x,y)); // 90도 회전 (위 -> 0)
+            rx = getRotatePower(targetYaw);
         }
 
+        //move: left stick
+        if(p == GamepadPurpose.MOVE || p == GamepadPurpose.WHOLE){
+            Vector2d moveVec = getMovePower();
+            mX = moveVec.x;
+            mY = moveVec.y;
+        }
+
+        //dpad
+        if(gamepad1.dpad_left || gamepad1.dpad_right){
+            rx = (gamepad1.dpad_right? 1:0) - (gamepad1.dpad_left? -1:0);
+        }
+
+        double deno = JavaUtil.maxOfList(
+                JavaUtil.createListWith(
+                        Math.abs(mX),
+                        Math.abs(mY),
+                        Math.abs(rx),
+                        1));
+        fl.setPower((mX + mY +rx) / deno * speed);
+        fr.setPower((-mX + mY -rx) / deno * speed);
+        rl.setPower((-mX + mY +rx) / deno * speed);
+        rr.setPower((mX + mY -rx) / deno * speed);
     }
 
     /**
@@ -116,30 +143,31 @@ public class IMU_Driving {
     Vector2d getMovePower(){
         double x = gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
-        double radian = Math.toRadians(-getYaw()); // 라디안 계산 때는 정방향 필요
+        if(Math.abs(x) < 0.1 && Math.abs(y) < 0.1) return new Vector2d(0,0);
+        double radian = Math.toRadians(getYaw()); // 라디안 계산 때는 정방향 필요
 
         double a = x * Math.cos(radian) + y * Math.sin(radian);
         double b = x * -Math.sin(radian) + y * Math.cos(radian);
 
         if(Math.abs(a) < 0.00000025) a = 0;
         if(Math.abs(b) < 0.00000025) b = 0;
+        telemetry.addData("move: ", a + "/" + b );
         return new Vector2d(a,b);
     }
 
 
 
 
-
-
-    enum StartPos{
+    public enum StartPos{
         BLUE_L, //작은 삼각형(런치 존)
         BLUE_R, //큰 삼각형(런치 존)
         RED_L, //큰 삼각형(런치 존)
         RED_R; //작은 삼각형(런치 존)
     }
-    enum GamepadPurpose{
+    public enum GamepadPurpose{
         MOVE,
-        ROTATE;
+        ROTATE,
+        WHOLE;
     }
 
 }

@@ -23,6 +23,11 @@ public class IMU_Test extends LinearOpMode {
         lf.setDirection(DcMotorSimple.Direction.REVERSE);
         lr.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         imu_d = new IMU_Driving(lf,rf,lr,rr,imu,telemetry,gamepad1);
         imu_d.init();
         waitForStart();
@@ -30,7 +35,7 @@ public class IMU_Test extends LinearOpMode {
             // Pre-run
             while (opModeIsActive()) {
                 // OpMode loop
-                imu_d.rota();
+                imu_d.controlWithPad(IMU_Driving.GamepadPurpose.WHOLE);
                 telemetry.update();
             }
         }
