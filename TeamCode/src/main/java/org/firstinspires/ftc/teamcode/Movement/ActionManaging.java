@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ActionManaging {
 
     Servo lifting;
-    DcMotor Turret_R,Turret_L,Turret_M , IntakeDc;
+    DcMotor Turret_S,Turret_M , IntakeDc;
     ColorSensor c1, c2, c3;
 
     Telemetry telemetry;
@@ -25,18 +25,15 @@ public class ActionManaging {
     void initialize() {
 
         IntakeDc = hardwareMap.dcMotor.get("IntakeDc");
-        Turret_L = hardwareMap.dcMotor.get("Turret_L");
-        Turret_R = hardwareMap.dcMotor.get("Turret_R");
+        Turret_S = hardwareMap.dcMotor.get("Turret_S");
         Turret_M = hardwareMap.dcMotor.get("Turret_M");
 
         IntakeDc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Turret_L.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Turret_R.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Turret_S.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Turret_M.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         IntakeDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Turret_L.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Turret_R.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Turret_S.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Turret_M.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     ElapsedTime timer;
@@ -55,14 +52,13 @@ public class ActionManaging {
     }
 
     public void outtake(double power){
-        Turret_L.setPower(power);
-        Turret_R.setPower(-power);
-
+        Turret_S.setPower(power);
+        IntakeDc.setPower(1);
     }
 
     public void outtake_stop(){
-        Turret_L.setPower(0);
-        Turret_R.setPower(0);
+        Turret_S.setPower(0);
+        IntakeDc.setPower(0);
 
     }
 }

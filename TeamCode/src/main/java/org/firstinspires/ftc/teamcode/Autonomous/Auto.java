@@ -34,7 +34,7 @@ public final class Auto extends LinearOpMode {
 
     // 하드웨어
     Servo lifting;
-    DcMotor Turret_R, Turret_L, Turret_M, IntakeDc, fl, fr, rl, rr;
+    DcMotor Turret_S, Turret_M, IntakeDc, fl, fr, rl, rr;
     ColorSensor c1, c2, c3;
     Limelight3A limelight;
     Telemetry telemetry;
@@ -50,20 +50,17 @@ public final class Auto extends LinearOpMode {
     void initialize() {
 
         IntakeDc = hardwareMap.dcMotor.get("IntakeDc");
-        Turret_L = hardwareMap.dcMotor.get("Turret_L");
-        Turret_R = hardwareMap.dcMotor.get("Turret_R");
+        Turret_S = hardwareMap.dcMotor.get("Turret_S");
         Turret_M = hardwareMap.dcMotor.get("Turret_M");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
 
         IntakeDc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Turret_L.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Turret_R.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Turret_S.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Turret_M.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         IntakeDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Turret_L.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Turret_R.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Turret_S.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Turret_M.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
