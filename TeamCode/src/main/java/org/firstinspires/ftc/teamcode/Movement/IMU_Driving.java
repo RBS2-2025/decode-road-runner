@@ -25,7 +25,7 @@ public class IMU_Driving {
     Telemetry telemetry;
     Gamepad gamepad1;
 
-    public double speed = 1;
+    public double speed = 0.7;
     double yaw;
 
     public void init(){
@@ -45,10 +45,10 @@ public class IMU_Driving {
 
     public void resetYaw(StartPos pos){
         if(pos == StartPos.BLUE_L || pos == StartPos.RED_R){ //반시게방향 90도 회전
-            rotate(90);
+            rotate2Deg(90);
         }
         else if(pos == StartPos.BLUE_R || pos == StartPos.RED_L){// 시계방향 90도 회전
-            rotate(-90);
+            rotate2Deg(-90);
         }
         else{
             return;
@@ -57,92 +57,117 @@ public class IMU_Driving {
         imu.resetYaw();
     }
 
-    public double rotaeSlowThreshold = 50;
-    public double gamepadRotate(){
-        double x = gamepad1.right_stick_x;
-        double y =  -gamepad1.right_stick_y;
+    public double rotateSlowThreshold = 50;
 
-        double targetYaw = -Math.toDegrees(Math.atan2(x,y));
-        getYaw();
-
-        if(Math.abs(x) <= 0.1 && Math.abs(y)  <= 0.1){
-            return 0;
-        }
-
-
-        return getRotatePower(targetYaw);
-    }
+    /**
+     * GET YAW!!
+     * @param targetYaw 타켓 각도
+     * @return rx
+     */
     public double getRotatePower(double targetYaw){
-        double yawDistance = targetYaw - yaw;
-        if(Math.abs(yawDistance) > 180){
-            yawDistance -= Math.signum(yawDistance) * 360;
+        //yaw 거리 전처리
+        double yawDist = targetYaw - getYaw(); //GetYaw !!
+        if(Math.abs(yawDist) > 180){
+            yawDist -= Math.signum(yawDist) * 360;
         }
-
         double rx;
-        if(Math.abs(yawDistance) > rotaeSlowThreshold){
-            rx = Math.signum(yawDistance);
+        if(Math.abs(yawDist) > rotateSlowThreshold){//거리가 임계값 이상 이면
+            rx = Math.signum(yawDist); //rx = 최대(1)
         }
         else{
-            rx = yawDistance/rotaeSlowThreshold;
-
+            rx = yawDist/ rotateSlowThreshold; // 거리가 임계값 이하면 거리에 반비례해 1~0
         }
 
-        telemetry.addData("rx: ",rx);
-        telemetry.addData("yawD: ", yawDistance);
-        telemetry.addData("target: ", targetYaw);
+        telemetry.addData("rotate: ", targetYaw + "/" + -rx + "/" + yawDist);
         return -rx;
     }
 
-    public Vector2d getMovePower(){
-        double rad = -Math.toRadians(getYaw());
-        double x,y,a,b;
-        x = gamepad1.left_stick_x;
-        y = -gamepad1.left_stick_y;
-
-        a = x * Math.cos(rad) + y * Math.sin(rad);
-        b = x * -Math.sin(rad) + y * Math.cos(rad);
-
-        if(Math.abs(a) < 0.00000025) a = 0;
-        if(Math.abs(b) < 0.00000025) b = 0;
-
-        return new Vector2d(a,b);
-    }
-
-    public void move(){
-        double rx = gamepadRotate();
-        Vector2d moveVec = getMovePower();
-        double deno = JavaUtil.maxOfList(
-                JavaUtil.createListWith(
-                        Math.abs(moveVec.x),
-                        Math.abs(moveVec.y),
-                        Math.abs(rx),
-                        1));
-
-        fl.setPower((-moveVec.x + moveVec.y +rx) / deno * speed);
-        fr.setPower((moveVec.x + moveVec.y -rx) / deno * speed);
-        rl.setPower((moveVec.x + moveVec.y +rx) / deno * speed);
-        rr.setPower((-moveVec.x + moveVec.y -rx) / deno * speed);
-
-    }
-
-    public void rotate(double targetYaw){
-        double rx = getRotatePower(targetYaw);
-        while(Math.abs(rx) > 0){
+    /**
+     *
+     * @param targetYaw 타겟 각도
+     * @see IMU_Driving#getRotatePower(double) 
+     */
+    public void rotate2Deg(double targetYaw){
+        double rx;
+        do {
+            rx = getRotatePower(targetYaw);
             fl.setPower(rx * speed);
             fr.setPower(-rx  * speed);
             rl.setPower(rx  * speed);
             rr.setPower(-rx  * speed);
+        }while(Math.abs(rx) > 0.01);
+    }
+
+    public void controlWithPad(GamepadPurpose p){
+        double rx = 0;
+        double mX = 0;
+        double mY = 0;
+
+        //rotate: right stick
+        if(p == GamepadPurpose.ROTATE || p == GamepadPurpose.WHOLE && !(Math.abs(gamepad1.right_stick_x) < 0.1 && Math.abs(gamepad1.right_stick_y) < 0.1)){
+            double x = gamepad1.right_stick_x;
+            double y = -gamepad1.right_stick_y;
+            telemetry.addData("move: ", x + "/" + y );
+            double targetYaw = -Math.toDegrees(Math.atan2(x,y)); // 90도 회전 (위 -> 0)
+            rx = getRotatePower(targetYaw);
         }
 
+        //move: left stick
+        if(p == GamepadPurpose.MOVE || p == GamepadPurpose.WHOLE){
+            Vector2d moveVec = getMovePower();
+            mX = moveVec.x;
+            mY = moveVec.y;
+        }
+
+        //dpad
+        if(gamepad1.dpad_left || gamepad1.dpad_right){
+            rx = (gamepad1.dpad_right? 1:0) - (gamepad1.dpad_left? -1:0);
+        }
+
+        double deno = JavaUtil.maxOfList(
+                JavaUtil.createListWith(
+                        Math.abs(mX),
+                        Math.abs(mY),
+                        Math.abs(rx),
+                        1));
+        fl.setPower((mX + mY +rx) / deno * speed);
+        fr.setPower((-mX + mY -rx) / deno * speed);
+        rl.setPower((-mX + mY +rx) / deno * speed);
+        rr.setPower((mX + mY -rx) / deno * speed);
+    }
+
+    /**
+     * GetYaw!!
+     * @return (dx,dy) - 이동 방향
+     */
+    Vector2d getMovePower(){
+        double x = gamepad1.left_stick_x;
+        double y = -gamepad1.left_stick_y;
+        if(Math.abs(x) < 0.1 && Math.abs(y) < 0.1) return new Vector2d(0,0);
+        double radian = Math.toRadians(getYaw()); // 라디안 계산 때는 정방향 필요
+
+        double a = x * Math.cos(radian) + y * Math.sin(radian);
+        double b = x * -Math.sin(radian) + y * Math.cos(radian);
+
+        if(Math.abs(a) < 0.00000025) a = 0;
+        if(Math.abs(b) < 0.00000025) b = 0;
+        telemetry.addData("move: ", a + "/" + b );
+        return new Vector2d(a,b);
     }
 
 
-    public enum StartPos{
 
+
+    public enum StartPos{
         BLUE_L, //작은 삼각형(런치 존)
         BLUE_R, //큰 삼각형(런치 존)
         RED_L, //큰 삼각형(런치 존)
         RED_R; //작은 삼각형(런치 존)
+    }
+    public enum GamepadPurpose{
+        MOVE,
+        ROTATE,
+        WHOLE;
     }
 
 }
