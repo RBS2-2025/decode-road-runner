@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcode.Vision.vision;
     @Override
     public void runOpMode() {
 
-        action = new ActionManaging();
+        action = new ActionManaging(hardwareMap);
         vision = new vision();
         imu_driving = new IMU_Driving(fl,fr,rl, rr, imu, telemetry,gamepad1);
         waitForStart();
@@ -57,11 +57,11 @@ import org.firstinspires.ftc.teamcode.Vision.vision;
                     In_wasPressed = false;
                 }
                 if(gamepad2.b){
-                    action.outtake(1);
+                    //action.outtake(1);
                     Out_wasPressed = true;
                 }
                 if(!gamepad2.b && Out_wasPressed){
-                    action.outtake_stop();
+                    //action.outtake(0);
                     Out_wasPressed = false;
                 }
                 if (gamepad2.y) {
@@ -70,7 +70,6 @@ import org.firstinspires.ftc.teamcode.Vision.vision;
                 if(gamepad2.x){
                     vision.decode();
                 }
-
 
                     telemetry.update();
 
