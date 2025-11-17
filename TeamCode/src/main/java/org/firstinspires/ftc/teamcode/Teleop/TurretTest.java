@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Movement.ActionManaging;
+import org.firstinspires.ftc.teamcode.Vision.vision;
 
 // === Dashboard import ===
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -25,9 +26,11 @@ public class TurretTest extends LinearOpMode {
     public static double outtakePower = 1.0;
 
     ActionManaging action;
+    vision visionModule = new vision();
 
     private boolean In_wasPressed = false;
     private boolean Out_wasPressed = false;
+
 
     @Override
     public void runOpMode() {
@@ -35,7 +38,7 @@ public class TurretTest extends LinearOpMode {
 
         action = new ActionManaging(hardwareMap);
         action.initialize();
-
+        visionModule.VisionModule(hardwareMap, telemetry);
         waitForStart();
 
         while (opModeIsActive()) {
@@ -43,7 +46,7 @@ public class TurretTest extends LinearOpMode {
             // intake (gamepad2.a)
             if (gamepad2.a) {
                 action.intake(intakePower);
-                In_wasPressed = true;
+                if(!In_wasPressed) In_wasPressed = true;
             }
             if (!gamepad2.a && In_wasPressed) {
                 action.intake_stop();
@@ -53,22 +56,21 @@ public class TurretTest extends LinearOpMode {
             // outtake (gamepad2.b)
             if (gamepad2.b) {
                 action.outtake(outtakePower);
-                Out_wasPressed = true;
+                if(!Out_wasPressed) Out_wasPressed = true;
             }
             if (!gamepad2.b && Out_wasPressed) {
                 action.outtake_stop();
                 Out_wasPressed = false;
             }
 
-            if (gamepad2.y) {
-                action.onlyouttake(outtakePower);
-                Out_wasPressed = true;
+            if (gamepad2.x){
+                visionModule.scan();
             }
-            if (!gamepad2.y && Out_wasPressed) {
-                action.onlyouttake_stop();
-                Out_wasPressed = false;
+            if (gamepad2.right_bumper){
+                visionModule.align(action.Turret_R,true);
             }
             telemetry.update();
+
         }
     }
 }

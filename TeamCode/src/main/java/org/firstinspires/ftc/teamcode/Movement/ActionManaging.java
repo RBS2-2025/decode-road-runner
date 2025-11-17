@@ -16,7 +16,7 @@ public class ActionManaging {
 
     private HardwareMap hardwareMap;
     Servo lifting;
-    DcMotor Turret_S,Turret_R , IntakeDc;
+    public DcMotor Turret_S,Turret_R , IntakeDc;
     ColorSensor c1, c2, c3;
 
     Telemetry telemetry;
@@ -50,15 +50,6 @@ public class ActionManaging {
         IntakeDc.setPower(0);
     }
     public void turret_rotation() {
-
-        //수동, 자동 고민해봐야할듯
-
-    }
-    public void onlyouttake(double power){
-        Turret_S.setPower(power);
-    }
-    public void onlyouttake_stop(){
-        Turret_S.setPower(0);
     }
 
     public void outtake(double power){
