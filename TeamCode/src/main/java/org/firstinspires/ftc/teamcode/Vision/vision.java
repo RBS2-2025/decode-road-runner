@@ -93,9 +93,9 @@ public class vision {
             if (Math.abs(tx) < 5) {
                 dc.setPower(0);
             } else if (tx > 0) {
-                dc.setPower(0.05);
-            } else {
                 dc.setPower(-0.05);
+            } else {
+                dc.setPower(0.05);
             }
 
             return;

@@ -14,33 +14,37 @@ import org.firstinspires.ftc.teamcode.Movement.ActionManaging;
 import org.firstinspires.ftc.teamcode.Movement.IMU_Driving;
 import org.firstinspires.ftc.teamcode.Vision.vision;
 
+import java.util.concurrent.TimeUnit;
+
 @TeleOp(name = "Tele")public class Teleop_test_kla extends LinearOpMode {
     Servo lifting;
-    DcMotor Turret_S, Turret_M, IntakeDc, fl, fr, rl, rr;
+    DcMotor fl, fr, rl, rr;
     ColorSensor c1, c2, c3;
-    Limelight3A limelight;
     Telemetry telemetry;
     Gamepad gamepad1, gamepad2;
     IMU imu;
     IMU_Driving imu_driving;
-    vision vision;
     ActionManaging action;
+    vision visionModule = new vision();
+
     public static double intakePower = 1.0;
     public static double outtakePower = 1.0;
     ElapsedTime timer;
     private boolean In_wasPressed = false;
     private boolean Out_wasPressed = false;
+    private boolean Align_wasPressed = false;
 
 
     @Override
     public void runOpMode() {
 
         action = new ActionManaging(hardwareMap);
-        vision = new vision();
-        imu_driving = new IMU_Driving(fl,fr,rl, rr, imu, telemetry,gamepad1);
+        imu_driving = new IMU_Driving(fl, fr, rl, rr, imu, telemetry, gamepad1);
+        visionModule.VisionModule(hardwareMap, telemetry);
+
         waitForStart();
 
-        initialize();
+        action.initialize();
         imu_driving.init();
         imu_driving.getYaw();
 
@@ -49,7 +53,7 @@ import org.firstinspires.ftc.teamcode.Vision.vision;
             while (opModeIsActive()) {
                 imu_driving.controlWithPad(IMU_Driving.GamepadPurpose.WHOLE);
 
-
+                // intake (gamepad2.a)
                 if (gamepad2.a) {
                     action.intake(intakePower);
                     if (!In_wasPressed) In_wasPressed = true;
@@ -61,38 +65,47 @@ import org.firstinspires.ftc.teamcode.Vision.vision;
 
                 // outtake (gamepad2.b)
                 if (gamepad2.b) {
-                    action.outtake(outtakePower);
-                    if (!Out_wasPressed) Out_wasPressed = true;
+                    if (!Out_wasPressed) {
+                        timer.reset();
+                        Out_wasPressed = true;
+
+                        while (timer.time(TimeUnit.SECONDS) <= 1.5) {
+                            action.outtake(outtakePower);
+                            if (!gamepad2.b) {
+                                break;
+                            }
+                        }
+                        action.intake(intakePower);
+                    } else {
+                        action.outtake(outtakePower);
+                        action.intake(intakePower);
+                    }
                 }
                 if (!gamepad2.b && Out_wasPressed) {
                     action.outtake_stop();
                     Out_wasPressed = false;
                 }
 
-                    telemetry.update();
-
-
+                // align (gamepad2.y)
+                if (gamepad2.y){
+                    visionModule.align(action.Turret_R,true);
+                    Align_wasPressed = true;
                 }
+                if (!gamepad2.y && Align_wasPressed){
+                    visionModule.align(action.Turret_R,true);
+                    Align_wasPressed = false;
+                }
+
+                if (gamepad2.x){
+                    visionModule.decode();
+                }
+
+                telemetry.update();
+
+
             }
         }
-
-    void initialize() {
-
-        IntakeDc = hardwareMap.dcMotor.get("IntakeDc");
-        Turret_S = hardwareMap.dcMotor.get("Turret_S");
-        Turret_M = hardwareMap.dcMotor.get("Turret_M");
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-
-
-        IntakeDc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Turret_S.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Turret_M.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        IntakeDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Turret_S.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Turret_M.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-
 }
 
 

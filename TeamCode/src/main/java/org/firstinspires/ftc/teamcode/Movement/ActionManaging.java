@@ -43,18 +43,21 @@ public class ActionManaging {
     ElapsedTime timer;
 
     public void intake(double power_in) {
-       IntakeDc.setPower(power_in);
+        IntakeDc.setPower(power_in);
     }
 
     public void intake_stop() {
         IntakeDc.setPower(0);
     }
+    public void intake_r() {
+        IntakeDc.setPower(0.3);
+    }
+
     public void turret_rotation() {
     }
 
     public void outtake(double power){
         Turret_S.setPower(power);
-        IntakeDc.setPower(1);
     }
 
     public void outtake_stop(){
