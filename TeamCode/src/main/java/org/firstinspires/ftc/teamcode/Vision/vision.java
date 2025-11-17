@@ -104,8 +104,6 @@ public class vision {
         dc.setPower(0);
     }
 
-
-
     public void scan(){
         LLResult result = limelight.getLatestResult();
         if (result.isValid()) {
