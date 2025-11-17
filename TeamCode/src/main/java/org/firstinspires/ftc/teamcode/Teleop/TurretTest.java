@@ -46,7 +46,7 @@ public class TurretTest extends LinearOpMode {
             // intake (gamepad2.a)
             if (gamepad2.a) {
                 action.intake(intakePower);
-                if(!In_wasPressed) In_wasPressed = true;
+                if (!In_wasPressed) In_wasPressed = true;
             }
             if (!gamepad2.a && In_wasPressed) {
                 action.intake_stop();
@@ -56,7 +56,7 @@ public class TurretTest extends LinearOpMode {
             // outtake (gamepad2.b)
             if (gamepad2.b) {
                 action.outtake(outtakePower);
-                if(!Out_wasPressed) Out_wasPressed = true;
+                if (!Out_wasPressed) Out_wasPressed = true;
             }
             if (!gamepad2.b && Out_wasPressed) {
                 action.outtake_stop();

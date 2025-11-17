@@ -25,6 +25,8 @@ import org.firstinspires.ftc.teamcode.Vision.vision;
     IMU_Driving imu_driving;
     vision vision;
     ActionManaging action;
+    public static double intakePower = 1.0;
+    public static double outtakePower = 1.0;
     ElapsedTime timer;
     private boolean In_wasPressed = false;
     private boolean Out_wasPressed = false;
@@ -45,30 +47,26 @@ import org.firstinspires.ftc.teamcode.Vision.vision;
         if (opModeIsActive()) {
 
             while (opModeIsActive()) {
-                //imu_driving.move();
+                imu_driving.controlWithPad(IMU_Driving.GamepadPurpose.WHOLE);
 
 
                 if (gamepad2.a) {
-                    action.intake(1);
-                    In_wasPressed = true;
+                    action.intake(intakePower);
+                    if (!In_wasPressed) In_wasPressed = true;
                 }
-                if(!gamepad2.a && In_wasPressed){
+                if (!gamepad2.a && In_wasPressed) {
                     action.intake_stop();
                     In_wasPressed = false;
                 }
-                if(gamepad2.b){
-                    //action.outtake(1);
-                    Out_wasPressed = true;
+
+                // outtake (gamepad2.b)
+                if (gamepad2.b) {
+                    action.outtake(outtakePower);
+                    if (!Out_wasPressed) Out_wasPressed = true;
                 }
-                if(!gamepad2.b && Out_wasPressed){
-                    //action.outtake(0);
+                if (!gamepad2.b && Out_wasPressed) {
+                    action.outtake_stop();
                     Out_wasPressed = false;
-                }
-                if (gamepad2.y) {
-                    //vision.align();
-                }
-                if(gamepad2.x){
-                    vision.decode();
                 }
 
                     telemetry.update();
