@@ -32,8 +32,6 @@ public class TurretTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        // === Dashboard telemetry 연결 ===
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         action = new ActionManaging(hardwareMap);
         action.initialize();
@@ -62,10 +60,14 @@ public class TurretTest extends LinearOpMode {
                 Out_wasPressed = false;
             }
 
-            // === Dashboard 확인용 표시 ===
-            telemetry.addData("Intake Power", intakePower);
-            telemetry.addData("Outtake Power", outtakePower);
-
+            if (gamepad2.y) {
+                action.onlyouttake(outtakePower);
+                Out_wasPressed = true;
+            }
+            if (!gamepad2.y && Out_wasPressed) {
+                action.onlyouttake_stop();
+                Out_wasPressed = false;
+            }
             telemetry.update();
         }
     }

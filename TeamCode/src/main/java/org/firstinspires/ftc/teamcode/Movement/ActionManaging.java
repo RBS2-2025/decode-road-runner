@@ -16,7 +16,7 @@ public class ActionManaging {
 
     private HardwareMap hardwareMap;
     Servo lifting;
-    DcMotor Turret_S,Turret_M , IntakeDc;
+    DcMotor Turret_S,Turret_R , IntakeDc;
     ColorSensor c1, c2, c3;
 
     Telemetry telemetry;
@@ -30,15 +30,15 @@ public class ActionManaging {
 
         IntakeDc = hardwareMap.dcMotor.get("IntakeDc");
         Turret_S = hardwareMap.dcMotor.get("Turret_S");
-        Turret_M = hardwareMap.dcMotor.get("Turret_M");
+        Turret_R = hardwareMap.dcMotor.get("Turret_R");
 
         IntakeDc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Turret_S.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Turret_M.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Turret_R.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         IntakeDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Turret_S.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Turret_M.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Turret_R.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     ElapsedTime timer;
 
@@ -53,6 +53,12 @@ public class ActionManaging {
 
         //수동, 자동 고민해봐야할듯
 
+    }
+    public void onlyouttake(double power){
+        Turret_S.setPower(power);
+    }
+    public void onlyouttake_stop(){
+        Turret_S.setPower(0);
     }
 
     public void outtake(double power){
