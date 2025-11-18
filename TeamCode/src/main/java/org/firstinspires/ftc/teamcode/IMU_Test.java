@@ -9,26 +9,26 @@ import org.firstinspires.ftc.teamcode.Movement.IMU_Driving;
 
 @TeleOp(name = "IMU_Test")
 public class IMU_Test extends LinearOpMode {
-    DcMotor lf, rf, lr, rr;
+    DcMotor fl, fr, rl, rr;
     IMU imu;
     IMU_Driving imu_d ;
     @Override
     public void runOpMode() {
-        lf = hardwareMap.dcMotor.get("lf");
-        rf = hardwareMap.dcMotor.get("rf");
-        lr = hardwareMap.dcMotor.get("lr");
+        fl = hardwareMap.dcMotor.get("fl");
+        fr = hardwareMap.dcMotor.get("fr");
+        rl = hardwareMap.dcMotor.get("rl");
         rr = hardwareMap.dcMotor.get("rr");
         imu = hardwareMap.get(IMU.class,"imu");
 
-        lf.setDirection(DcMotorSimple.Direction.REVERSE);
-        lr.setDirection(DcMotorSimple.Direction.REVERSE);
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        rl.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        imu_d = new IMU_Driving(lf,rf,lr,rr,imu,telemetry,gamepad1);
+        imu_d = new IMU_Driving(fl,fr,rl,rr,imu,telemetry,gamepad1);
         imu_d.init();
         waitForStart();
         if (opModeIsActive()) {

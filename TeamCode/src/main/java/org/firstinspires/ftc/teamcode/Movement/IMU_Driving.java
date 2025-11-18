@@ -20,10 +20,10 @@ public class IMU_Driving {
         this.telemetry = telemetry;
         this.gamepad1 = gamepad1;
     }
-    DcMotor fl,fr,rl,rr;
-    IMU imu;
-    Telemetry telemetry;
-    Gamepad gamepad1;
+    public DcMotor fl,fr,rl,rr;
+    public IMU imu;
+    public Telemetry telemetry;
+    public Gamepad gamepad1;
 
     public double speed = 0.7;
     double yaw;
@@ -32,7 +32,6 @@ public class IMU_Driving {
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
         imu.resetYaw();
         telemetry.addData("IMU: ", "INITIALIZED");
-        telemetry.update();
     }
 
 

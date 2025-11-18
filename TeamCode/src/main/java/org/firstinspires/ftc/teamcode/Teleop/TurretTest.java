@@ -41,8 +41,8 @@ public class TurretTest extends LinearOpMode {
     public void runOpMode() {
 
         timer.reset();
-        action = new ActionManaging(hardwareMap);
-        action.initialize();
+//        action = new ActionManaging(hardwareMap);
+//        action.initialize();
         visionModule.VisionModule(hardwareMap, telemetry);
         waitForStart();
 

@@ -13,34 +13,22 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ActionManaging {
-
-    private HardwareMap hardwareMap;
-    Servo lifting;
+//    Servo lifting;
     public DcMotor Turret_S,Turret_R , IntakeDc;
-    ColorSensor c1, c2, c3;
+//    ColorSensor c1, c2, c3;
+//
+//    Telemetry telemetry;
+//    Gamepad gamepad1,gamepad2;
+//    IMU imu;
+//
+//
+//    ElapsedTime timer;
 
-    Telemetry telemetry;
-    Gamepad gamepad1,gamepad2;
-    IMU imu;
-
-    public ActionManaging(HardwareMap hw) {
-        this.hardwareMap = hw;
+    public ActionManaging(DcMotor Turret_S, DcMotor Turret_R, DcMotor IntakeDc) {
+        this.Turret_S = Turret_S;
+        this.Turret_R = Turret_R;
+        this.IntakeDc = IntakeDc;
     }
-    public void initialize() {
-
-        IntakeDc = hardwareMap.dcMotor.get("IntakeDc");
-        Turret_S = hardwareMap.dcMotor.get("Turret_S");
-        Turret_R = hardwareMap.dcMotor.get("Turret_R");
-
-        IntakeDc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Turret_S.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Turret_R.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        IntakeDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Turret_S.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Turret_R.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
-    ElapsedTime timer;
 
     public void intake(double power_in) {
         IntakeDc.setPower(power_in);
@@ -50,7 +38,7 @@ public class ActionManaging {
         IntakeDc.setPower(0);
     }
     public void intake_r() {
-        IntakeDc.setPower(0.3);
+        IntakeDc.setPower(-1);
     }
 
     public void turret_rotation() {
