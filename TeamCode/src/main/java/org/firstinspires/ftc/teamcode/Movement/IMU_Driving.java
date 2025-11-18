@@ -120,7 +120,7 @@ public class IMU_Driving {
 
         //dpad
         if(gamepad1.dpad_left || gamepad1.dpad_right){
-            rx = (gamepad1.dpad_right? 1:0) - (gamepad1.dpad_left? -1:0);
+            rx = (gamepad1.dpad_right? 1:0) - (gamepad1.dpad_left? 1:0);
         }
 
         double deno = JavaUtil.maxOfList(
