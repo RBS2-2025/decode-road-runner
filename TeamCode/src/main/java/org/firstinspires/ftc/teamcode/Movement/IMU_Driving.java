@@ -125,6 +125,16 @@ public class IMU_Driving {
             rx = (gamepad1.dpad_right? 1:0) - (gamepad1.dpad_left? 1:0);
         }
 
+        // 속도 조절 g1.rb -- / lb -
+        speed = 0.7;
+        if(gamepad1.right_bumper){
+            speed = 0.3;
+        }else if (gamepad1.left_bumper ){
+            speed = 0.5;
+        }
+
+
+
         double deno = JavaUtil.maxOfList(
                 JavaUtil.createListWith(
                         Math.abs(mX),

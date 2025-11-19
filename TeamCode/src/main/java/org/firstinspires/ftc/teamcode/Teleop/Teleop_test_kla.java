@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Vision.vision;
 import java.util.concurrent.TimeUnit;
 
 @TeleOp
+@Config
 public class Teleop_test_kla extends LinearOpMode {
     Servo lifting;
     DcMotor Turret_S, Turret_R, IntakeDc, fl, fr, rl, rr;
@@ -35,6 +37,9 @@ public class Teleop_test_kla extends LinearOpMode {
     private boolean InR_wasPressed = false;
     private boolean Out_wasPressed = false;
     private boolean Align_wasPressed = false;
+    private boolean a_wasPressed = false;
+    private boolean b_wasPressed = false;
+
     ElapsedTime timer = new ElapsedTime();
 
     void TurretRotateTest(){
@@ -119,7 +124,30 @@ public class Teleop_test_kla extends LinearOpMode {
                     visionModule.align(Turret_R,true);
                     Align_wasPressed = false;
                 }
-                    telemetry.update();
+
+                // outtake Power 조정 g1.b - / g1.a +
+
+                if (gamepad1.a && !a_wasPressed) {
+                    outtakePower += 0.05;
+                }
+                a_wasPressed = gamepad1.a;
+
+                if (gamepad1.b && !b_wasPressed) {
+                    outtakePower -= 0.05;
+                }
+                b_wasPressed = gamepad1.b;
+
+                // outtake Power 변경 g1.x 0.5 / g1.y 0.1
+                if(gamepad1.x){
+                    outtakePower = 0.5;
+                }
+                if(gamepad1.y){
+                    outtakePower = 0.1;
+                }
+
+                telemetry.addData("Outtake Power", outtakePower);
+
+                telemetry.update();
                 }
             }
         }
