@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Movement;
+package org.firstinspires.ftc.teamcode.movement;
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -108,7 +108,9 @@ public class IMU_Driving {
             double y = -gamepad1.right_stick_y;
             telemetry.addData("move: ", x + "/" + y );
             double targetYaw = -Math.toDegrees(Math.atan2(x,y)); // 90도 회전 (위 -> 0)
-            rx = getRotatePower(targetYaw);
+            if(Math.abs(targetYaw - yaw) > 1.5){
+                rx = getRotatePower(targetYaw);
+            }
         }
 
         //move: left stick

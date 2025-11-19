@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Movement.ActionManaging;
-import org.firstinspires.ftc.teamcode.Movement.IMU_Driving;
+import org.firstinspires.ftc.teamcode.movement.IMU_Driving;
 import org.firstinspires.ftc.teamcode.Vision.vision;
 
 import java.util.concurrent.TimeUnit;
@@ -37,6 +37,10 @@ public class Teleop_test_kla extends LinearOpMode {
     private boolean Align_wasPressed = false;
     ElapsedTime timer = new ElapsedTime();
 
+    void TurretRotateTest(){
+        double dir = (gamepad2.dpad_right? -1:0) - (gamepad2.dpad_left? -1:0);
+        Turret_R.setPower(dir*0.035);
+    }
 
     @Override
     public void runOpMode() {
@@ -58,6 +62,9 @@ public class Teleop_test_kla extends LinearOpMode {
 
             while (opModeIsActive()) {
                 imu_driving.controlWithPad(IMU_Driving.GamepadPurpose.WHOLE);
+
+                //TEST - 나중에 지우기
+                TurretRotateTest();
 
                 // intake reverse (gamepad2.x)
                 if (gamepad2.x) {
@@ -85,8 +92,7 @@ public class Teleop_test_kla extends LinearOpMode {
                     if (!Out_wasPressed){
                         timer.reset();
                         Out_wasPressed = true;
-
-                        while(timer.time(TimeUnit.SECONDS) <= 1.2){
+                        while(timer.time(TimeUnit.SECONDS) <= 1.5){
                             action.outtake(outtakePower);
                             if(!gamepad2.b){
                                 break;
@@ -148,6 +154,7 @@ public class Teleop_test_kla extends LinearOpMode {
         Turret_S.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Turret_R.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
+
 
 }
 
