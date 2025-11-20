@@ -42,10 +42,6 @@ public class Teleop_test_kla extends LinearOpMode {
 
     ElapsedTime timer = new ElapsedTime();
 
-    void TurretRotateTest(){
-        double dir = (gamepad2.dpad_right? -1:0) - (gamepad2.dpad_left? -1:0);
-        Turret_R.setPower(dir*0.035);
-    }
 
     @Override
     public void runOpMode() {
@@ -68,89 +64,126 @@ public class Teleop_test_kla extends LinearOpMode {
             while (opModeIsActive()) {
                 imu_driving.controlWithPad(IMU_Driving.GamepadPurpose.WHOLE);
 
-                //TEST - 나중에 지우기
-                TurretRotateTest();
-
-                // intake reverse (gamepad2.x)
-                if (gamepad2.x) {
-                    action.intake_r();
-                    if (!InR_wasPressed) InR_wasPressed = true;
-
-                }
-                if (!gamepad2.x && InR_wasPressed) {
-                    action.intake_stop();
-                    InR_wasPressed = false;
-                }
-
-                // intake (gamepad2.a)
-                if (gamepad2.a) {
-                    action.intake(intakePower);
-                    if (!In_wasPressed) In_wasPressed = true;
-                }
-                if (!gamepad2.a && In_wasPressed) {
-                    action.intake_stop();
-                    In_wasPressed = false;
-                }
-
-                // outtake (gamepad2.b)
-                if (gamepad2.b) {
-                    if (!Out_wasPressed){
-                        timer.reset();
-                        Out_wasPressed = true;
-                        while(timer.time(TimeUnit.SECONDS) <= 1.5){
-                            action.outtake(outtakePower);
-                            if(!gamepad2.b){
-                                break;
-                            }
-                        }
-                        action.intake(intakePower);
-                    }
-                    else{
-                        action.outtake(outtakePower);
-                        action.intake(intakePower);
-                    }
-                }
-
-                if (!gamepad2.b && Out_wasPressed) {
-                    action.outtake_stop();
-                    Out_wasPressed = false;
-                }
-
-                if (gamepad2.right_bumper){
-                    visionModule.align(Turret_R,true);
-                    Align_wasPressed = true;
-                }
-                if (!gamepad2.right_bumper && Align_wasPressed){
-                    visionModule.align(Turret_R,true);
-                    Align_wasPressed = false;
-                }
-
-                // outtake Power 조정 g1.b - / g1.a +
-
-                if (gamepad1.a && !a_wasPressed) {
-                    outtakePower += 0.05;
-                }
-                a_wasPressed = gamepad1.a;
-
-                if (gamepad1.b && !b_wasPressed) {
-                    outtakePower -= 0.05;
-                }
-                b_wasPressed = gamepad1.b;
-
-                // outtake Power 변경 g1.x 0.5 / g1.y 0.1
-                if(gamepad1.x){
-                    outtakePower = 0.5;
-                }
-                if(gamepad1.y){
-                    outtakePower = 0.1;
-                }
+                intakeR();
+                intake();
+                outtake();
+                align();
+                adjustOuttakePower();
 
                 telemetry.addData("Outtake Power", outtakePower);
 
                 telemetry.update();
-                }
             }
         }
+    }
+
+    /**
+     * 인테이크
+     */
+    void intake(){
+        // intake (gamepad2.a)
+        if (gamepad2.a) {
+            action.intake(intakePower);
+            if (!In_wasPressed) In_wasPressed = true;
+        }
+        if (!gamepad2.a && In_wasPressed) {
+            action.intake_stop();
+            In_wasPressed = false;
+        }
+    }
+
+    /**
+     * 배출
+     */
+    void intakeR(){
+        // intake reverse (gamepad2.x)
+        if (gamepad2.x) {
+            action.intake_r();
+            if (!InR_wasPressed) InR_wasPressed = true;
+
+        }
+        if (!gamepad2.x && InR_wasPressed) {
+            action.intake_stop();
+            InR_wasPressed = false;
+        }
+    }
+
+    /**
+     * 아웃테이크
+     */
+    void outtake(){
+        // outtake (gamepad2.b)
+        if (gamepad2.b) {
+            if (!Out_wasPressed){
+                timer.reset();
+                Out_wasPressed = true;
+                while(timer.time(TimeUnit.SECONDS) <= 1.5){
+                    intakeR();
+                    intake();
+                    align();
+                    adjustOuttakePower();
+                    action.outtake(outtakePower);
+                    if(!gamepad2.b){
+                        break;
+                    }
+                }
+                action.intake(intakePower);
+                intakeR();
+                intake();
+                align();
+                adjustOuttakePower();
+            }
+            else{
+                action.outtake(outtakePower);
+                action.intake(intakePower);
+            }
+        }
+
+        if (!gamepad2.b && Out_wasPressed) {
+            action.outtake_stop();
+            Out_wasPressed = false;
+        }
+    }
+
+    /**
+     * 터렛 얼라인
+     */
+    void align(){
+        //align
+        if (gamepad2.right_bumper){
+            visionModule.align(Turret_R,true);
+            Align_wasPressed = true;
+        }
+        if (!gamepad2.right_bumper && Align_wasPressed){
+            visionModule.align(Turret_R,true);
+            Align_wasPressed = false;
+        }
+    }
+
+    /**
+     * 아웃테이크 파워 조정 (a,b,x,y)
+     */
+    void adjustOuttakePower(){
+        // outtake Power 조정 g1.b - / g1.a +
+        if (gamepad1.a && !a_wasPressed) {
+            outtakePower += 0.05;
+        }
+        a_wasPressed = gamepad1.a;
+
+        if (gamepad1.b && !b_wasPressed) {
+            outtakePower -= 0.05;
+        }
+        b_wasPressed = gamepad1.b;
+
+        // outtake Power 변경 g1.x 0.5 / g1.y 0.1
+        if(gamepad1.x){
+            outtakePower = 0.5;
+        }
+        if(gamepad1.y){
+            outtakePower = 0.1;
+        }
+    }
+
 
     void initialize() {
 
@@ -182,6 +215,8 @@ public class Teleop_test_kla extends LinearOpMode {
         Turret_S.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Turret_R.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
+
+
 
 
 }
