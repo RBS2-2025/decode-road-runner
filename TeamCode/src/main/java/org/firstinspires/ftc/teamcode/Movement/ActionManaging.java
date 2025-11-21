@@ -29,8 +29,7 @@ public class ActionManaging {
         IntakeDc.setPower(-1);
     }
 
-    public void turret_rotation() {
-    }
+
 
     public void outtake(double power){
         Turret_S.setPower(power);
