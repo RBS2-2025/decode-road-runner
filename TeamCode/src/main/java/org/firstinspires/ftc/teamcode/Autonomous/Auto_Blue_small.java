@@ -29,14 +29,20 @@ import org.firstinspires.ftc.teamcode.Vision.vision;
 public final class Auto_Blue_small extends LinearOpMode {
 
     // blue 기준 좌표
-    public static double Robot_X = 16;
-    public static double Robot_Y = 17.5;
-    private static final Pose2d START_POSE = new Pose2d(-72 + Robot_X/2, 0, Math.PI/2);
-    private static final Vector2d BP1 = new Vector2d(-36 + Robot_X/2,  36 - Robot_Y/2);
-    private static final Vector2d BP2 = new Vector2d(-12 + Robot_X/2,  36 - Robot_Y/2);
-    private static final Vector2d BP3 = new Vector2d(12 - Robot_X/2,  36- Robot_Y/2);
-    private static final Vector2d G1 = new Vector2d( -48 + Robot_X/2,  0);
-    private static final Vector2d G2 = new Vector2d( 0,  0);
+    public static double Robot_X = 17.5;
+    public static double Robot_Y = 16;
+    private static final Pose2d START_POSE = new Pose2d(0, -72 + Robot_X/2, Math.PI/2);
+
+    private static final Vector2d BP1 = new Vector2d(36 - Robot_Y/2, -36 + Robot_X/2);
+
+    private static final Vector2d BP2 = new Vector2d(36 - Robot_Y/2, -12 + Robot_X/2);
+
+    private static final Vector2d BP3 = new Vector2d(36 - Robot_Y/2, 12 - Robot_X/2);
+
+    private static final Vector2d G1 = new Vector2d(0, -60 + Robot_X/2);
+
+    private static final Vector2d G2 = new Vector2d(0, 0);
+
 
     Servo lifting;
     DcMotor Turret_S, Turret_R, IntakeDc;
@@ -46,7 +52,7 @@ public final class Auto_Blue_small extends LinearOpMode {
     ActionManaging action;
 
     public static double intakePower = 1.0;
-    public static final double FEED_SEC = 0.6;        // 피딩 시간
+    public static final double FEED_SEC = 10;        // 피딩 시간
     public static final double ALIGN_SPEED = 0.3;     // 터렛 정렬 스피드
 
 
@@ -85,7 +91,7 @@ public final class Auto_Blue_small extends LinearOpMode {
                 // 보유 공 발사
                 moveSpinAlignShoot(
                         drive.actionBuilder(START_POSE)
-                                .splineTo(G1, Math.PI/4)
+                                .splineTo(G2, Math.PI*3/4)
                                 .build(),
                         true ,
                         1
@@ -156,7 +162,7 @@ public final class Auto_Blue_small extends LinearOpMode {
 
                 // ---------- 주차 ----------
                 drive.actionBuilder(drive.localizer.getPose())
-                        .splineTo(new Vector2d(-48,-32), Math.PI/2)
+                        .splineTo(new Vector2d(-32,-48), Math.PI/2)
                  .build()
 
                  **/
@@ -185,9 +191,10 @@ public final class Auto_Blue_small extends LinearOpMode {
                 ),
 
 
-                useAlign
-                        ? new AlignAction(visionModule, Turret_R, true, ALIGN_SPEED)
-                        : new SleepAction(0),
+//                useAlign
+//                        ? new AlignAction(visionModule, Turret_R, true, ALIGN_SPEED)
+//                        : new SleepAction(0),
+                new SleepAction(2),
 
                 new FeedForTimeAction(action, intakePower, FEED_SEC),
 
@@ -210,7 +217,7 @@ public final class Auto_Blue_small extends LinearOpMode {
         @Override
         public boolean run(@NonNull TelemetryPacket p) {
             action.outtake(power);
-            return true;
+            return false;
         }
     }
 
@@ -256,11 +263,13 @@ public final class Auto_Blue_small extends LinearOpMode {
         public boolean run(@NonNull TelemetryPacket p) {
             if (!started) {
                 timer.reset();
+                p.put("Align: ", "started");
                 started = true;
             }
 
             if (timer.seconds() <= seconds) {
                 action.intake(power);
+
                 return true;
             } else {
                 action.intake_stop();

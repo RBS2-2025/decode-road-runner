@@ -132,7 +132,7 @@ public class vision {
 
         // 1) 프레임이 유효하지 않으면 멈추고 계속 반복(정렬 미완료)
         if (result == null || !result.isValid()) {
-            turret.setPower(0);
+            turret.setPower(Blue? 0.1:-0.1);
             return false;
         }
 
