@@ -16,7 +16,6 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -30,11 +29,13 @@ import org.firstinspires.ftc.teamcode.Vision.vision;
 public final class Auto_Blue_small extends LinearOpMode {
 
     // blue 기준 좌표
-    private static final Pose2d START_POSE = new Pose2d(-72, 0, Math.PI/2);
-    private static final Vector2d BP1 = new Vector2d(-36,  36);
-    private static final Vector2d BP2 = new Vector2d(-12,  36);
-    private static final Vector2d BP3 = new Vector2d(  12,  36);
-    private static final Vector2d G1 = new Vector2d( -48,  0);
+    public static double Robot_X = 16;
+    public static double Robot_Y = 17.5;
+    private static final Pose2d START_POSE = new Pose2d(-72 + Robot_X/2, 0, Math.PI/2);
+    private static final Vector2d BP1 = new Vector2d(-36 + Robot_X/2,  36 - Robot_Y/2);
+    private static final Vector2d BP2 = new Vector2d(-12 + Robot_X/2,  36 - Robot_Y/2);
+    private static final Vector2d BP3 = new Vector2d(12 - Robot_X/2,  36- Robot_Y/2);
+    private static final Vector2d G1 = new Vector2d( -48 + Robot_X/2,  0);
     private static final Vector2d G2 = new Vector2d( 0,  0);
 
     Servo lifting;
