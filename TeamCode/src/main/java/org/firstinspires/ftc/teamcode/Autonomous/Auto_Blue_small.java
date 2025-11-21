@@ -35,11 +35,11 @@ public final class Auto_Blue_small extends LinearOpMode {
 
     private static final Vector2d BP1 = new Vector2d(-36 + Robot_X/2, -36);
 
-    private static final Vector2d BP2 = new Vector2d(-36 - Robot_X/2, -12 + Robot_Y/2);
+    private static final Vector2d BP2 = new Vector2d(-36 + Robot_X/2, -12);
 
-    private static final Vector2d BP3 = new Vector2d(- 36 - Robot_X/2, 12 - Robot_Y/2);
+    private static final Vector2d BP3 = new Vector2d(- 36 + Robot_X/2, 12);
 
-    private static final Vector2d G1 = new Vector2d(0, -60 + Robot_X/2);
+    private static final Vector2d G1 = new Vector2d(0, -60 + Robot_Y/2);
 
     private static final Vector2d G2 = new Vector2d(0, 0);
     private static final Vector2d G3 = new Vector2d(-12 -Robot_X/2,12+Robot_Y/2 );
@@ -98,23 +98,33 @@ public final class Auto_Blue_small extends LinearOpMode {
                         true ,
                         0.45
                 )     ,
+                new SleepAction(2),
 
 
                 //  1차 수집
                 drive.actionBuilder(drive.localizer.getPose())
-                        .splineTo(BP1, Math.PI)
-                        .splineToConstantHeading(new Vector2d(-48+Robot_X/2, -36), Math.PI)
+                        .setTangent(Math.PI/2)
+                        .lineToY(BP3.y)
+                        .turn(Math.PI/2)
+                        .setTangent(Math.PI)
+                        .lineToX(BP3.x)
                         .build(),
 
+                new SleepAction(2),
 
-                new InstantAction(() -> action.intake(intakePower)),
+                new ParallelAction(new InstantAction(() -> action.intake(intakePower)),
+                        drive.actionBuilder(drive.localizer.getPose())
+                                .setTangent(Math.PI)
+                                .lineToX(BP3.x-15)
+                                .build()
+                        ),
                 new SleepAction(1.0),
                 new InstantAction(action::intake_stop),
 
                 // ---------- 1차 발사 ----------
                 moveSpinAlignShoot(
                         drive.actionBuilder(drive.localizer.getPose())
-                                .splineTo(G2, Math.PI/4)
+                                .splineTo(G3,Math.PI*3/4)
                                 .build(),
                         true,
                         0.5

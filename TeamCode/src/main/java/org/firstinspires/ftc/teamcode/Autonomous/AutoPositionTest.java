@@ -33,16 +33,16 @@ public final class AutoPositionTest extends LinearOpMode {
     public static double Robot_Y = 16;
     private static final Pose2d START_POSE = new Pose2d(0, -72 + Robot_Y/2, Math.PI/2);
 
-    private static final Vector2d BP1 = new Vector2d(-36 + Robot_X/2, -36);
+    private static final Vector2d __BP1_ = new Vector2d(0, -36);
 
-    private static final Vector2d BP2 = new Vector2d(-36 + Robot_X/2, -12);
+    private static final Vector2d _BP1 = new Vector2d(-36 + Robot_X/2, -36);
 
-    private static final Vector2d BP3 = new Vector2d(- 36 + Robot_X/2, 12);
+    private static final Vector2d _BP2 = new Vector2d(-36 + Robot_X/2, -12);
 
-    private static final Vector2d G1 = new Vector2d(0, -60 + Robot_Y/2);
+    private static final Vector2d _BP3 = new Vector2d(- 36 + Robot_X/2, 12);
 
-    private static final Vector2d G2 = new Vector2d(0, 0);
-    private static final Vector2d G3 = new Vector2d(-12 -Robot_X/2,12+Robot_Y/2);
+
+    private static final Vector2d _G2 = new Vector2d(0, 0);
 
 
 
@@ -68,12 +68,30 @@ public final class AutoPositionTest extends LinearOpMode {
         double dy = 0 - START_POSE.position.y;
         double tangentToZero = Math.atan2(dy, dx);
 
-        Action path = drive.actionBuilder(new Pose2d(0, -72, Math.PI/2))
-                .splineTo(new Vector2d(0,0),Math.PI/2)
-                .splineTo(BP1,Math.PI)
-                .splineTo(BP2,Math.PI)
-                .splineTo(BP3,Math.PI)
-                .build();
+        Action path = new SequentialAction(
+                drive.actionBuilder(START_POSE)
+                        .strafeTo(_G2)
+                        .build(),
+                new SleepAction(0.5),
+                drive.actionBuilder(drive.localizer.getPose())
+                                .strafeTo(__BP1_)
+                        .turn(Math.PI/2)
+                        .build(),
+                new SleepAction(0.5),
+                drive.actionBuilder(drive.localizer.getPose())
+                        .setTangent(Math.PI/2)
+                        .lineToX(_BP1.x)
+                        .build(),
+                new SleepAction(0.5),
+                drive.actionBuilder(drive.localizer.getPose())
+                        .strafeTo(_BP2)
+                        .build(),
+                new SleepAction(0.5),
+                drive.actionBuilder(drive.localizer.getPose())
+                        .strafeTo(_BP3)
+                        .build(),
+                new SleepAction(0.5)
+        );
 
         Actions.runBlocking(new SequentialAction(path));
 
