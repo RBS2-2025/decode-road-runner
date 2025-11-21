@@ -20,14 +20,17 @@ import org.firstinspires.ftc.teamcode.Movement.ActionManaging;
 import org.firstinspires.ftc.teamcode.Vision.vision;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
+import java.util.concurrent.TimeUnit;
+
 @Autonomous(name = "Auto_Actions_AfterTime")
-public final class Auto extends LinearOpMode {
+public final class Auto_Blue_small extends LinearOpMode {
 
     // 예시 좌표 (인치, 헤딩 라디안)
+    //blue 기준 코드
     private static final Pose2d START_POSE = new Pose2d(-72, 0, Math.PI/2);
-    private static final Vector2d P1 = new Vector2d(-36,  36);
-    private static final Vector2d P2 = new Vector2d(-12,  36);
-    private static final Vector2d P3 = new Vector2d(  12,  36);
+    private static final Vector2d BP1 = new Vector2d(-36,  36);
+    private static final Vector2d BP2 = new Vector2d(-12,  36);
+    private static final Vector2d BP3 = new Vector2d(  12,  36);
     private static final Vector2d G1 = new Vector2d( -48,  0);
     private static final Vector2d G2 = new Vector2d( 0,  0);
 
@@ -46,6 +49,11 @@ public final class Auto extends LinearOpMode {
     ElapsedTime timer;
     private boolean In_wasPressed = false;
     private boolean Out_wasPressed = false;
+    public static double intakePower = 1.0;
+    public static double outtakePower_L = 1;
+    public static double outtakePower_N = 0.1;
+
+
 
     void initialize() {
 
@@ -64,32 +72,6 @@ public final class Auto extends LinearOpMode {
         Turret_M.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    // -------- 액추에이터 액션 정의(InstantAction 추천) --------
-    private Action intakeOn() {
-        return new InstantAction(() -> {
-        });
-    }
-
-    private Action sorting() {
-        return new InstantAction(() -> {
-
-        });
-    }
-
-    private Action out_take() {
-        return new InstantAction(() -> {
-
-        });
-    }
-    private Action align() {
-        return new InstantAction(() -> {
-
-        });
-    }
-
-
-
-    // sorting system을 비롯한 다양한 동작 함수 작성
 
 
     @Override
@@ -99,62 +81,67 @@ public final class Auto extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, START_POSE);
         initialize();
 
-
         waitForStart();
         if (isStopRequested()) return;
 
-        // -------- 주행 + 시간 마커(afterTime) 예시 --------
         Action routine = drive.actionBuilder(START_POSE)
                 //보관 중인 Artifact 발사
                 .splineTo(G1, Math.PI/4)
-                .afterTime(0.1,sorting())
-                .stopAndAdd(align())
-                .stopAndAdd(out_take())
+             //   .afterTime(0.1, new InstantAction(()-> {vision.align();}))
+                .afterTime(1.5, new InstantAction(() -> {action.outtake(1);}))
+                .afterTime(1.2, new InstantAction(()-> {action.intake(intakePower);}))
+                .afterTime(3, new InstantAction(()-> {action.outtake_stop();}))
+                .afterTime(0.1,new InstantAction(()-> {action.intake_stop();}))
 
                 // 1차 먹기(패턴에 따라서 p1, p2, p3 변경)
-                .splineTo(P1, Math.PI)
+                .splineTo(BP1, Math.PI)
+                .afterTime(0.5, new InstantAction(() -> {action.intake(intakePower);}))
                 .splineToConstantHeading(new Vector2d(-36, 48), Math.PI)
-                .afterTime(0.3, intakeOn())
+                .afterTime(2, new InstantAction(()-> {action.intake_stop();}))
+
 
                 // 1차 발사
                 .splineTo(G2, Math.PI/4)
-                .stopAndAdd(align()) //aftertime 쓰면서 align 할 수 있는 확인 필요
-                .stopAndAdd(out_take())
+                .afterTime(2, new InstantAction(() -> {action.outtake(1)
+                ;}))
+                .afterTime(1.2, new InstantAction(()-> {action.intake(intakePower);}))
+                .afterTime(3, new InstantAction(() -> {action.outtake_stop();}))
+                .afterTime(0.1,new InstantAction(()-> {action.intake_stop();}))
 
                 //2차 수집
-                .splineTo(P2, Math.PI)
+                .splineTo(BP2, Math.PI)
+                .afterTime(0.3, new InstantAction(() -> {action.intake(intakePower);})) // aftertime 은 배터리의 상태에 영향을 받거나 오차가 생길 수도 있어서 afterDisp(), 거리 관련 함수로 사용할 방법도 찾아야함
                 .splineToConstantHeading(new Vector2d(-12, 48), Math.PI)
-                .afterTime(0.3, intakeOn()) // aftertime 은 배터리의 상태에 영향을 받거나 오차가 생길 수도 있어서 afterDisp(), 거리 관련 함수로 사용할 방법도 찾아야함
+                .afterTime(3, new InstantAction(()-> {action.intake_stop();}))
 
                 // 2차 발사
                 .splineTo(G2, Math.PI/4)
-                .stopAndAdd(align())
-                .afterTime(0.5,sorting())
-                .stopAndAdd(out_take())
-                .afterTime(0.5,sorting())
-                .stopAndAdd(out_take())
-                .afterTime(0.5,sorting())
-                .stopAndAdd(out_take())
+             //   .afterTime(0.2, new InstantAction(() -> {vision.align(Turret_M, boolean blue);}))
+                .afterTime(2.5,new InstantAction(() -> {action.outtake(1);}))
+                .afterTime(1.2, new InstantAction(()-> {action.intake(intakePower);}))
+                .afterTime(3,new InstantAction(() -> {action.outtake_stop();}))
+                .afterTime(0.1, new InstantAction(() -> {action.intake_stop();}))
 
                 //3차 수집
-                .splineTo(P3, Math.PI)
+                .splineTo(BP3, Math.PI)
+                .afterTime(0.5, new InstantAction(() -> {action.intake(intakePower);}))
                 .splineToConstantHeading(new Vector2d(-12, 48), Math.PI)
-                .afterTime(0.3, intakeOn())
+                .afterTime(2.5, new InstantAction(() -> {action.intake_stop();}))
 
                 // 3차 발사
                 .splineTo(G2, Math.PI/4)
-                .stopAndAdd(align())
-                .afterTime(0.5,sorting())
-                .stopAndAdd(out_take())
-                .afterTime(0.5,sorting())
-                .stopAndAdd(out_take())
-                .afterTime(0.5,sorting())
-                .stopAndAdd(out_take())
+                //.afterTime(0.2, new InstantAction(()-> {vision.align();}))
+                .afterTime(2,new InstantAction(()-> {action.outtake(1);}))
+                .afterTime(1.2, new InstantAction(()-> {action.intake(intakePower);}))
+                .afterTime(3, new InstantAction((()-> {action.outtake_stop();})))
+                .afterTime(0.1, new InstantAction(()-> {action.intake_stop();}))
+
 
                 // 시간 체크 후 human player zone까지 들어가서 체크(들어가는 공 갯수랑 정확도도 보면서 이후 로직 정해야할듯)
 
                 //주차
-                .splineTo(P1, Math.PI/2)
+
+                .splineTo(new Vector2d(-48,-32),Math.PI/2)
 
                 .build();
 
