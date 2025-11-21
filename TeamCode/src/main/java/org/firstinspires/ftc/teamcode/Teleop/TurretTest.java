@@ -85,14 +85,14 @@ public class TurretTest extends LinearOpMode {
 
             visionModule.scan();
 
-            if (gamepad2.right_bumper){
-                visionModule.align(action.Turret_R,true);
-                Align_wasPressed = true;
-            }
-            if (!gamepad2.right_bumper && Align_wasPressed){
-                visionModule.align(action.Turret_R,true);
-                Align_wasPressed = false;
-            }
+//            if (gamepad2.right_bumper){
+//                visionModule.align(action.Turret_R,true);
+//                Align_wasPressed = true;
+//            }
+//            if (!gamepad2.right_bumper && Align_wasPressed){
+//                visionModule.align(action.Turret_R,true);
+//                Align_wasPressed = false;
+//            }
             telemetry.update();
 
         }

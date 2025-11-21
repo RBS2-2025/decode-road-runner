@@ -37,7 +37,7 @@ public class vision {
     }
 
 
-     public void stop() {
+    public void stop() {
 
         limelight.stop();
     }
@@ -66,7 +66,7 @@ public class vision {
         }
     }
 
-    public void align(DcMotor dc, boolean Blue){ // 터렛 dc 받기 , Blue goal -> true
+    public void align(DcMotor dc, boolean Blue, double speed){ // 터렛 dc 받기 , Blue goal -> true
         LLResult result = limelight.getLatestResult();
 
         if (!result.isValid()) {
@@ -90,12 +90,12 @@ public class vision {
 
             tx = fr.getTargetXDegrees();
 
-            if (Math.abs(tx) < 5) {
+            if (Math.abs(tx) < 3) {
                 dc.setPower(0);
             } else if (tx > 0) {
-                dc.setPower(-0.05);
+                dc.setPower(-speed);
             } else {
-                dc.setPower(0.05);
+                dc.setPower(speed);
             }
 
             return;
