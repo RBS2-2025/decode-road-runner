@@ -31,18 +31,18 @@ public final class Auto_Blue_small extends LinearOpMode {
     // blue 기준 좌표
     public static double Robot_X = 17.5;
     public static double Robot_Y = 16;
-    private static final Pose2d START_POSE = new Pose2d(0, -72 + Robot_X/2, Math.PI/2);
+    private static final Pose2d START_POSE = new Pose2d(0, -72 + Robot_Y/2, Math.PI/2);
 
-    private static final Vector2d BP1 = new Vector2d(36 - Robot_Y/2, -36 + Robot_X/2);
+    private static final Vector2d BP1 = new Vector2d(-36 + Robot_X/2, -36);
 
-    private static final Vector2d BP2 = new Vector2d(36 - Robot_Y/2, -12 + Robot_X/2);
+    private static final Vector2d BP2 = new Vector2d(-36 - Robot_X/2, -12 + Robot_Y/2);
 
-    private static final Vector2d BP3 = new Vector2d(36 - Robot_Y/2, 12 - Robot_X/2);
+    private static final Vector2d BP3 = new Vector2d(- 36 - Robot_X/2, 12 - Robot_Y/2);
 
     private static final Vector2d G1 = new Vector2d(0, -60 + Robot_X/2);
 
     private static final Vector2d G2 = new Vector2d(0, 0);
-    private static final Vector2d G3 = new Vector2d(-24,24);
+    private static final Vector2d G3 = new Vector2d(-12 -Robot_X/2,12+Robot_Y/2 );
 
 
     Servo lifting;
@@ -53,7 +53,7 @@ public final class Auto_Blue_small extends LinearOpMode {
     ActionManaging action;
 
     public static double intakePower = 1.0;
-    public static final double FEED_SEC = 10;        // 피딩 시간
+    public static final double FEED_SEC = 3;        // 피딩 시간
     public static final double ALIGN_SPEED = 0.3;     // 터렛 정렬 스피드
 
 
@@ -70,6 +70,7 @@ public final class Auto_Blue_small extends LinearOpMode {
         IntakeDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Turret_S.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Turret_R.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     @Override
@@ -92,17 +93,17 @@ public final class Auto_Blue_small extends LinearOpMode {
                 // 보유 공 발사
                 moveSpinAlignShoot(
                         drive.actionBuilder(START_POSE)
-                                .splineTo(G2, Math.PI*3/4)
+                                .splineTo(G3, Math.PI*3/4)
                                 .build(),
                         true ,
-                        1
-                )   /**  ,
+                        0.45
+                )     ,
 
 
                 //  1차 수집
                 drive.actionBuilder(drive.localizer.getPose())
                         .splineTo(BP1, Math.PI)
-                        .splineToConstantHeading(new Vector2d(-36, 48), Math.PI)
+                        .splineToConstantHeading(new Vector2d(-48+Robot_X/2, -36), Math.PI)
                         .build(),
 
 
@@ -117,7 +118,7 @@ public final class Auto_Blue_small extends LinearOpMode {
                                 .build(),
                         true,
                         0.5
-                )**/      /**,
+                )      /**,
 
 
 
@@ -192,10 +193,10 @@ public final class Auto_Blue_small extends LinearOpMode {
                 ),
 
 
-//                useAlign
-//                        ? new AlignAction(visionModule, Turret_R, true, ALIGN_SPEED)
-//                        : new SleepAction(0),
-                new SleepAction(1.75),
+                useAlign
+                        ? new AlignAction(visionModule, Turret_R, true, ALIGN_SPEED)
+                        : new SleepAction(0),
+                new SleepAction(0.2),
 
                 new FeedForTimeAction(action, intakePower, FEED_SEC),
 

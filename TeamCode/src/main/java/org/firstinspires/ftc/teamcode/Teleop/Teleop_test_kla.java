@@ -29,6 +29,9 @@ public class Teleop_test_kla extends LinearOpMode {
 
     public static double intakePower = 1.0;
     public static double outtakePower = 1;
+    public static final double FAR_OTPOWRE = 1;
+    public static final double NEAR_OTPOWRE = 0.45;
+
     public static double Turret_R_Speed = 0.15;
     private boolean In_wasPressed = false;
     private boolean InR_wasPressed = false;
@@ -174,10 +177,10 @@ public class Teleop_test_kla extends LinearOpMode {
 
         // outtake Power 변경 g1.x 0.5 / g1.y 0.1
         if(gamepad1.x){
-            outtakePower = 0.5;
+            outtakePower = NEAR_OTPOWRE;
         }
         if(gamepad1.y){
-            outtakePower = 0.1;
+            outtakePower = FAR_OTPOWRE;
         }
     }
 
