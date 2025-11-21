@@ -114,7 +114,7 @@ public class Teleop_test_kla extends LinearOpMode {
             if (!Out_wasPressed){
                 timer.reset();
                 Out_wasPressed = true;
-                while(timer.time(TimeUnit.SECONDS) <= 1.5){
+                while(timer.time(TimeUnit.SECONDS) <= 2){
                     intakeR();
                     intake();
                     align();
