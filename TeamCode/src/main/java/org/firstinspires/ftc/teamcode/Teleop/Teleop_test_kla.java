@@ -5,15 +5,12 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Movement.ActionManaging;
-import org.firstinspires.ftc.teamcode.movement.IMU_Driving;
+import org.firstinspires.ftc.teamcode.Movement.IMU_Driving;
 import org.firstinspires.ftc.teamcode.Vision.vision;
 
 import java.util.concurrent.TimeUnit;
@@ -23,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 public class Teleop_test_kla extends LinearOpMode {
     Servo lifting;
     DcMotor Turret_S, Turret_R, IntakeDc, fl, fr, rl, rr;
-    ColorSensor c1, c2, c3;
     Limelight3A limelight;
 
     IMU imu;

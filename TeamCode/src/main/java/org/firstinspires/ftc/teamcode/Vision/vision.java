@@ -3,13 +3,11 @@ package org.firstinspires.ftc.teamcode.Vision;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.teamcode.movement.IMU_Driving;
+import org.firstinspires.ftc.teamcode.Movement.IMU_Driving;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -127,5 +125,59 @@ public class vision {
     // ^ 실패
 
     // 각도 찾기 https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
+
+    public boolean alignAuto(DcMotor turret, boolean Blue, double speed) {
+
+        LLResult result = limelight.getLatestResult();
+
+        // 1) 프레임이 유효하지 않으면 멈추고 계속 반복(정렬 미완료)
+        if (result == null || !result.isValid()) {
+            turret.setPower(0);
+            return false;
+        }
+
+        // 2) Fiducial(result) 리스트 가져오기
+        List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+        if (fiducialResults.isEmpty()) {
+            turret.setPower(0);
+            return false;
+        }
+
+        // 3) 목표 골 ID — 기존 align()과 동일
+        int targetId = Blue ? 20 : 24;
+
+        // 4) 탐색
+        for (LLResultTypes.FiducialResult fr : fiducialResults) {
+
+            if (fr.getFiducialId() != targetId) continue;
+
+            // tx = 가로 각도 오프셋(기존 align() 코드 기반)
+            double tx = fr.getTargetXDegrees();
+            double deadband = 2.0; // 정렬 완료 기준 오차 (조금 더 민감하게 2도 추천)
+
+            // 4-1) 정렬 완료 조건
+            if (Math.abs(tx) <= deadband) {
+                turret.setPower(0);
+                return true;   // ★★★ Action 종료됨
+            }
+
+            // 4-2) 아직 정렬 안 됨 → 계속 회전
+            if (tx > 0) {
+                turret.setPower(-speed); // 오른쪽에 목표 → 왼쪽으로 회전
+            } else {
+                turret.setPower(speed);  // 왼쪽에 목표 → 오른쪽으로 회전
+            }
+
+            return false;  // 아직 정렬 중
+        }
+
+        // 5) targetId 못 찾음 → 정지, 계속 탐색
+        turret.setPower(0);
+        return false;
+    }
+
+
+
+
 
 }

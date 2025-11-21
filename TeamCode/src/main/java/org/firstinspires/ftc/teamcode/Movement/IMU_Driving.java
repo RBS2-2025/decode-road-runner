@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.movement;
+package org.firstinspires.ftc.teamcode.Movement;
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;

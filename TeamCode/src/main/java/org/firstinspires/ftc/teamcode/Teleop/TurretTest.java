@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Movement.ActionManaging;
 import org.firstinspires.ftc.teamcode.Vision.vision;
 
@@ -35,6 +31,7 @@ public class TurretTest extends LinearOpMode {
     private boolean Align_wasPressed = false;
 
     ElapsedTime timer = new ElapsedTime();
+
 
 
     @Override
