@@ -33,6 +33,7 @@ public class Teleop_test_kla extends LinearOpMode {
 
     public static double intakePower = 1.0;
     public static double outtakePower = 0.15;
+    public static double Turret_R_Speed = 0.15;
     private boolean In_wasPressed = false;
     private boolean InR_wasPressed = false;
     private boolean Out_wasPressed = false;
@@ -46,7 +47,7 @@ public class Teleop_test_kla extends LinearOpMode {
     @Override
     public void runOpMode() {
         initialize();
-        //action.initialize();
+
         timer.reset();
 
         action = new ActionManaging(Turret_S, Turret_R, IntakeDc);
@@ -151,11 +152,11 @@ public class Teleop_test_kla extends LinearOpMode {
     void align(){
         //align
         if (gamepad2.right_bumper){
-            visionModule.align(Turret_R,true);
-            Align_wasPressed = true;
+            visionModule.align(Turret_R,true,Turret_R_Speed);
+            if (!Align_wasPressed) Align_wasPressed = true;
         }
         if (!gamepad2.right_bumper && Align_wasPressed){
-            visionModule.align(Turret_R,true);
+            Turret_R.setPower(0);
             Align_wasPressed = false;
         }
     }
