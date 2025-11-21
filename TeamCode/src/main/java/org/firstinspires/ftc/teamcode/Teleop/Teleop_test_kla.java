@@ -28,7 +28,7 @@ public class Teleop_test_kla extends LinearOpMode {
     vision visionModule = new vision();
 
     public static double intakePower = 1.0;
-    public static double outtakePower = 0.15;
+    public static double outtakePower = 1;
     public static double Turret_R_Speed = 0.15;
     private boolean In_wasPressed = false;
     private boolean InR_wasPressed = false;

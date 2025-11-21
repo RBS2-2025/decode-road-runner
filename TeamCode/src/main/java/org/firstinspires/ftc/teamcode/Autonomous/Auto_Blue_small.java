@@ -42,6 +42,7 @@ public final class Auto_Blue_small extends LinearOpMode {
     private static final Vector2d G1 = new Vector2d(0, -60 + Robot_X/2);
 
     private static final Vector2d G2 = new Vector2d(0, 0);
+    private static final Vector2d G3 = new Vector2d(-24,24);
 
 
     Servo lifting;
@@ -194,7 +195,7 @@ public final class Auto_Blue_small extends LinearOpMode {
 //                useAlign
 //                        ? new AlignAction(visionModule, Turret_R, true, ALIGN_SPEED)
 //                        : new SleepAction(0),
-                new SleepAction(2),
+                new SleepAction(1.75),
 
                 new FeedForTimeAction(action, intakePower, FEED_SEC),
 
