@@ -6,19 +6,16 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-
-import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -26,25 +23,23 @@ import org.firstinspires.ftc.teamcode.Movement.ActionManaging;
 import org.firstinspires.ftc.teamcode.Movement.IMU_Driving;
 import org.firstinspires.ftc.teamcode.Vision.vision;
 
-
-@Autonomous
-public final class Auto_Blue_small extends LinearOpMode {
-
-    // blue 기준 좌표
+@Autonomous(name = "Auto_Red_small")
+public class Auto_Red_small extends LinearOpMode {
+    // red 기준 좌표
     public static double Robot_X = 17.5;
     public static double Robot_Y = 16;
     private static final Pose2d START_POSE = new Pose2d(0, -72 + Robot_Y/2, Math.PI/2);
 
-    private static final Vector2d BP1 = new Vector2d(-36 + Robot_X/2, -36);
+    private static final Vector2d BP1 = new Vector2d(36 - Robot_X/2, -36);
 
-    private static final Vector2d BP2 = new Vector2d(-36 + Robot_X/2, -12);
+    private static final Vector2d BP2 = new Vector2d(+36 - Robot_X/2, -12);
 
-    private static final Vector2d BP3 = new Vector2d(- 36 + Robot_X/2, 12);
+    private static final Vector2d BP3 = new Vector2d(+ 36 - Robot_X/2, 12);
 
     private static final Vector2d G1 = new Vector2d(0, -60 + Robot_Y/2);
 
     private static final Vector2d G2 = new Vector2d(0, 0);
-    private static final Vector2d G3 = new Vector2d(-12 -Robot_X/2,12+Robot_Y/2 );
+    private static final Vector2d G3 = new Vector2d(+12 +Robot_X/2,12+Robot_Y/2 );
 
 
     Servo lifting;
@@ -105,7 +100,7 @@ public final class Auto_Blue_small extends LinearOpMode {
         Actions.runBlocking(
                 moveSpinAlignShoot(
                         drive.actionBuilder(START_POSE)
-                                .splineTo(G3, Math.PI* (double) 3/4)
+                                .splineTo(G3, (double) 1/4 * Math.PI)
                                 .build(),
                         true,
                         0.45
@@ -225,7 +220,7 @@ public final class Auto_Blue_small extends LinearOpMode {
 
                 new ParallelAction(
                         moveAction,
-                        new OuttakeSpinUpAction(action, shotPower)
+                        new Auto_Blue_small.OuttakeSpinUpAction(action, shotPower)
                 ),
 
 
@@ -234,7 +229,7 @@ public final class Auto_Blue_small extends LinearOpMode {
                         : new SleepAction(0),
                 new SleepAction(0.2),
 
-                new FeedForTimeAction(action, intakePower, FEED_SEC),
+                new Auto_Blue_small.FeedForTimeAction(action, intakePower, FEED_SEC),
 
                 new InstantAction(action::outtake_stop)
         );

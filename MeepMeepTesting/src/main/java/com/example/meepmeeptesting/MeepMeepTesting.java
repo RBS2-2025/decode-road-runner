@@ -11,8 +11,8 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
 
-//    public static double Robot_X = 17.5;
-//    public static double Robot_Y = 16;
+    public static double Robot_X = 17.5;
+    public static double Robot_Y = 16;
 //    private static final Pose2d START_POSE = new Pose2d(0, -72 + Robot_Y/2, Math.PI/2);
 //
 //    private static final Vector2d BP1 = new Vector2d(-36 + Robot_X/2, -36);
@@ -33,29 +33,11 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        Action path = new SequentialAction(
-                myBot.getDrive().actionBuilder(START_POSE)
-                        .strafeTo(G2)
-                        .build(),
-                myBot.getDrive().actionBuilder(myBot.getPose())
-                                .lineToX(G2.x)
-                                        .build(),
-//                new SleepAction(0.5),
-                myBot.getDrive().actionBuilder(myBot.getPose())
-                        .strafeTo(new Vector2d(myBot.getPose().position.x,BP1.y))
-                        .strafeTo(BP1)
-                        .turn(Math.PI/2)
-                        .build(),
-//                new SleepAction(0.5),
-                myBot.getDrive().actionBuilder(myBot.getPose())
-                        .strafeTo(BP2)
-                        .build(),
-//                new SleepAction(0.5),
-                myBot.getDrive().actionBuilder(myBot.getPose())
-                        .strafeTo(BP3)
-                        .build(),
-                new SleepAction(0.5)
-        );
+        Action path = myBot.getDrive().actionBuilder(new Pose2d(0,-72+Robot_Y/2,Math.PI/2))
+                .splineTo(new Vector2d(12 +Robot_X/2,12+Robot_Y/2), (double) 1 /4*Math.PI)
+//                .turnTo(Math.PI/2)
+                .splineTo(new Vector2d(0,-24),Math.PI/2)
+                .build();
 
         myBot.runAction(path);
 

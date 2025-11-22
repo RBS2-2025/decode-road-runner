@@ -86,7 +86,7 @@ public class IMU_Driving {
      * @param targetYaw 타겟 각도
      * @see IMU_Driving#getRotatePower(double) 
      */
-    public void rotate2Deg(double targetYaw){
+    public boolean rotate2Deg(double targetYaw){
         double rx;
         do {
             rx = getRotatePower(targetYaw);
@@ -94,7 +94,8 @@ public class IMU_Driving {
             fr.setPower(-rx  * speed);
             rl.setPower(rx  * speed);
             rr.setPower(-rx  * speed);
-        }while(Math.abs(rx) > 0.01);
+        }while(Math.abs(getYaw()-targetYaw) > 4);
+        return false;
     }
 
     public void controlWithPad(GamepadPurpose p){
@@ -123,6 +124,10 @@ public class IMU_Driving {
         //dpad
         if(gamepad1.dpad_left || gamepad1.dpad_right){
             rx = (gamepad1.dpad_right? 1:0) - (gamepad1.dpad_left? 1:0);
+        }
+        //init
+        if((p == GamepadPurpose.MOVE || p == GamepadPurpose.WHOLE) && gamepad1.leftStickButtonWasPressed()){
+            imu.resetYaw();
         }
 
         // 속도 조절 g1.rb -- / lb -
@@ -165,6 +170,7 @@ public class IMU_Driving {
         telemetry.addData("move: ", a + "/" + b );
         return new Vector2d(a,b);
     }
+
 
 
 
