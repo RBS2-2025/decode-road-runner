@@ -5,6 +5,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Movement.IMU_Driving;
@@ -25,6 +26,11 @@ public class vision {
 
     public double tx ;
 
+    public double cam_height = 0; // 카메라 높이
+    public double target_height = 0; // 골대 태그 높이
+    public double cam_angle = 0; // 카메라 설치 각도
+
+
     public void VisionModule(HardwareMap hardwareMap, Telemetry telemetry) {
         this.limelight = hardwareMap.get(Limelight3A.class, "limelight");
         this.telemetry = telemetry;
@@ -33,8 +39,6 @@ public class vision {
         limelight.pipelineSwitch(0); // 0번 파이프라인 (예: AprilTag)
         limelight.start();
     }
-
-
     public void stop() {
 
         limelight.stop();
@@ -119,12 +123,23 @@ public class vision {
 
     public double getDistanceFromTage(double ta){
         double scale = 30665.95;
-        double distance = (scale / ta);
-        return distance;
+        return (scale / ta);
     }
     // ^ 실패
 
-    // 각도 찾기 https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
+    public double getDistanceFromTy() {
+        LLResult result = limelight.getLatestResult();
+        if (!result.isValid()) return -1;
+
+        double ty = result.getTy();
+
+        double angleDeg = cam_angle + ty;
+        double angleRad = Math.toRadians(angleDeg);
+
+        if (Math.abs(angleDeg) < 1e-3) return -1;
+
+        return (target_height - cam_height) / Math.tan(angleRad);
+    }
 
     public boolean alignAuto(DcMotor turret, boolean Blue, double speed) {
 
@@ -176,6 +191,26 @@ public class vision {
         return false;
     }
 
+    public void setHood(Servo hood){
+        double dist = getDistanceFromTy();
+        if (dist < 0) return;
+
+        double pos;
+
+        if (dist < 150) {          // 가까움
+            pos = 0.20;
+        } else if (dist < 200) {   // 중간
+            pos = 0.30;
+        } else {                   // 멂
+            pos = 0.40;
+        }
+
+        hood.setPosition(pos);
+
+        telemetry.addData("Dist", dist);
+        telemetry.addData("Hood", pos);
+
+    }
 
 
 
