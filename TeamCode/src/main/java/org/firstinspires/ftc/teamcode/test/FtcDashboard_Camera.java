@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.function.Consumer;
 import org.firstinspires.ftc.robotcore.external.function.Continuation;
@@ -22,7 +23,7 @@ import org.opencv.core.Mat;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Autonomous(name = "Vision For DFG", group = "Linear")
+@TeleOp(name = "Vision For DFG", group = "Linear")
 public class FtcDashboard_Camera extends LinearOpMode {
     public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource { // 대시보드 띄우기?
         private final AtomicReference<Bitmap> lastFrame =

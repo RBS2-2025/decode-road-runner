@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 @TeleOp
 public class FLywheelTunnertutorial extends OpMode {
@@ -19,7 +21,7 @@ public class FLywheelTunnertutorial extends OpMode {
     double curTargetVelocity = highvelocity;
     double F = 0; //15.5
     double P = 0;
-
+    double nominalVoltage = 12.0;
     double[] stepSizes = {10.0, 1.0, 0.1, 0.001};
 
     int stepIndex = 1;
@@ -32,12 +34,19 @@ public class FLywheelTunnertutorial extends OpMode {
 
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P,0,0, F);
         Turret_S.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        telemetry = new MultipleTelemetry(
+                telemetry,
+                FtcDashboard.getInstance().getTelemetry()
+        );
         telemetry.addLine("Init complete");
 
     }
 
     @Override
     public void loop() {
+        double batteryVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+
+        double compensatedF = F * (nominalVoltage / batteryVoltage);
 
         if(gamepad1.yWasPressed()) {
             if(curTargetVelocity == highvelocity) {
@@ -59,11 +68,10 @@ public class FLywheelTunnertutorial extends OpMode {
         if (gamepad1.dpadUpWasPressed()) {
             P -= stepSizes[stepIndex];
         }
-        // set new PIDF coefficients
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P,0,0, F);
+
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P,0,0, compensatedF);
         Turret_S.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
-        //set Velocity
         Turret_S.setVelocity(curTargetVelocity);
 
         double curVelocity = Turret_S.getVelocity();
@@ -78,6 +86,6 @@ public class FLywheelTunnertutorial extends OpMode {
         telemetry.addData("Step Size","%.4f (B button)",stepSizes[stepIndex]);
 
 
-
+        telemetry.update();
     }
 }
