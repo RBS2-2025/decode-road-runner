@@ -68,42 +68,28 @@ public class vision {
         }
     }
 
-    public void align(DcMotor dc, boolean Blue, double speed){ // 터렛 dc 받기 , Blue goal -> true
+    public void align(DcMotor dc, boolean Blue, double Kp, double maxPower, double deadzone ) {
         LLResult result = limelight.getLatestResult();
-
         if (!result.isValid()) {
             dc.setPower(0);
             return;
         }
-
         List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
         if (fiducialResults.isEmpty()) {
             dc.setPower(0);
             return;
         }
-
         int targetId = Blue ? 20 : 24;
-
         for (LLResultTypes.FiducialResult fr : fiducialResults) {
-            if (fr.getFiducialId() != targetId)
-                continue;
-
-            telemetry.addData("goal", Blue ? "blue" : "red");
-
+            if (fr.getFiducialId() != targetId) continue;
             tx = fr.getTargetXDegrees();
-
-            if (Math.abs(tx) < 3) {
-                dc.setPower(0);
-            } else if (tx > 0) {
-                dc.setPower(-speed);
-            } else {
-                dc.setPower(speed);
-            }
-
+            double power = tx * Kp;
+            if (power > maxPower) power = -maxPower;
+            if (power < -maxPower) power = maxPower;
+            if (Math.abs(tx) < deadzone) power = 0;
+            dc.setPower(power);
             return;
         }
-
-        dc.setPower(0);
     }
 
     public void scan(){

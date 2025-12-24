@@ -63,7 +63,7 @@ public class TurretTest extends LinearOpMode {
                     Out_wasPressed = true;
 
                     while(timer.time(TimeUnit.SECONDS) <= 1.5){
-                        action.outtake(outtakePower);
+                        action.outtake();
                         if(!gamepad2.b){
                             break;
                         }
@@ -71,7 +71,7 @@ public class TurretTest extends LinearOpMode {
                     action.intake(intakePower);
                 }
                 else{
-                    action.outtake(outtakePower);
+                    action.outtake();
                     action.intake(intakePower);
                 }
             }

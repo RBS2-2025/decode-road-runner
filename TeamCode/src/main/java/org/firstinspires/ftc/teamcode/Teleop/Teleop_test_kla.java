@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -19,7 +20,8 @@ import java.util.concurrent.TimeUnit;
 @Config
 public class Teleop_test_kla extends LinearOpMode {
     Servo lifting;
-    DcMotor Turret_S, Turret_R, IntakeDc, fl, fr, rl, rr;
+    DcMotor Turret_R, IntakeDc, fl, fr, rl, rr;
+    DcMotorEx Turret_S;
     Limelight3A limelight;
 
     IMU imu;
@@ -39,6 +41,8 @@ public class Teleop_test_kla extends LinearOpMode {
     private boolean Align_wasPressed = false;
     private boolean a_wasPressed = false;
     private boolean b_wasPressed = false;
+    private boolean left_wasPressed = false;
+    private boolean right_wasPressed = false;
 
     ElapsedTime timer = new ElapsedTime();
 
@@ -69,6 +73,10 @@ public class Teleop_test_kla extends LinearOpMode {
                 outtake();
                 align();
                 adjustOuttakePower();
+
+                double voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+
+                action.updateFlywheelPIDF(voltage);
 
                 telemetry.addData("Outtake Power", outtakePower);
 
@@ -114,34 +122,16 @@ public class Teleop_test_kla extends LinearOpMode {
     void outtake(){
         // outtake (gamepad2.b)
         if (gamepad2.b) {
-            if (!Out_wasPressed){
-                timer.reset();
-                Out_wasPressed = true;
-                while(timer.time(TimeUnit.SECONDS) <= 2){
-                    intakeR();
-                    intake();
-                    align();
-                    adjustOuttakePower();
-                    action.outtake(outtakePower);
-                    if(!gamepad2.b){
-                        break;
-                    }
-                }
-                action.intake(intakePower);
-                intakeR();
-                intake();
-                align();
-                adjustOuttakePower();
-            }
-            else{
-                action.outtake(outtakePower);
-                action.intake(intakePower);
-            }
+            action.intake(1);
+            action.outtake();
         }
 
         if (!gamepad2.b && Out_wasPressed) {
             action.outtake_stop();
             Out_wasPressed = false;
+        }
+        if (gamepad2.y){
+            action.preheat();
         }
     }
 
@@ -151,12 +141,28 @@ public class Teleop_test_kla extends LinearOpMode {
     void align(){
         //align
         if (gamepad2.right_bumper){
-            visionModule.align(Turret_R,true,Turret_R_Speed);
+            visionModule.align(Turret_R,true,0.03,0.1,2.0);
             if (!Align_wasPressed) Align_wasPressed = true;
         }
         if (!gamepad2.right_bumper && Align_wasPressed){
             Turret_R.setPower(0);
             Align_wasPressed = false;
+        }
+
+        if (gamepad2.dpad_left) {
+            Turret_R.setPower(-0.1);
+            left_wasPressed = true;
+        } else if (left_wasPressed) {
+            Turret_R.setPower(0);
+            left_wasPressed = false;
+        }
+
+        if (gamepad2.dpad_right) {
+            Turret_R.setPower(0.1);
+            right_wasPressed = true;
+        } else if (right_wasPressed) {
+            Turret_R.setPower(0);
+            right_wasPressed = false;
         }
     }
 
@@ -204,7 +210,7 @@ public class Teleop_test_kla extends LinearOpMode {
 
 
         IntakeDc = hardwareMap.dcMotor.get("IntakeDc");
-        Turret_S = hardwareMap.dcMotor.get("Turret_S");
+        Turret_S = hardwareMap.get(DcMotorEx.class, "Turret_S");
         Turret_R = hardwareMap.dcMotor.get("Turret_R");
 
         IntakeDc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
