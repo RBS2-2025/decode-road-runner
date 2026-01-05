@@ -33,7 +33,7 @@ public final class Auto_Blue_small extends LinearOpMode {
     // blue 기준 좌표
     public static double Robot_X = 17.5;
     public static double Robot_Y = 16;
-    private static final Pose2d START_POSE = new Pose2d(0, -72 + Robot_Y/2, Math.PI/2);
+    private static final Pose2d START_POSE = new Pose2d(-12, -72 + Robot_Y/2, Math.PI/2);
 
     private static final Vector2d BP1 = new Vector2d(-36 + Robot_X/2, -36);
 
