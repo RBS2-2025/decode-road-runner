@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp
 @Config
-public class Teleop_test_kla extends LinearOpMode {
+public class TeleOpMain extends LinearOpMode {
     Servo lifting;
     DcMotor Turret_R, IntakeDc, fl, fr, rl, rr;
     DcMotorEx Turret_S;
@@ -120,23 +120,23 @@ public class Teleop_test_kla extends LinearOpMode {
      * 아웃테이크
      */
     /**
-    void outtake(){
-        // outtake (gamepad2.b)
-        if (gamepad2.b) {
-            action.intake(1);
-            action.outtake();
-            Out_wasPressed = true;
-        }
+     void outtake(){
+     // outtake (gamepad2.b)
+     if (gamepad2.b) {
+     action.intake(1);
+     action.outtake();
+     Out_wasPressed = true;
+     }
 
-        if (!gamepad2.b && Out_wasPressed) {
-            action.outtake_stop();
-            Out_wasPressed = false;
-            action.preheat();
-        }
-        if (gamepad2.y){
-            action.preheat();
-        }
-    } **/
+     if (!gamepad2.b && Out_wasPressed) {
+     action.outtake_stop();
+     Out_wasPressed = false;
+     action.preheat();
+     }
+     if (gamepad2.y){
+     action.preheat();
+     }
+     } **/
     void outtake(){
         // outtake (gamepad2.b)
         if (gamepad2.b) {
@@ -167,8 +167,20 @@ public class Teleop_test_kla extends LinearOpMode {
 
         if (!gamepad2.b && Out_wasPressed) {
             action.outtake_stop();
-            action.preheat();
             Out_wasPressed = false;
+            delay(1);
+            action.preheat();
+        }
+    }
+    void delay(double t){
+        ElapsedTime rePreheatTimer = new ElapsedTime();
+        rePreheatTimer.reset();
+        while (rePreheatTimer.time(TimeUnit.SECONDS) <= t){
+            telemetry.addData("status: ","delaying..");
+            telemetry.update();
+        }
+        if(rePreheatTimer.time(TimeUnit.SECONDS) >= t){
+            return;
         }
     }
 

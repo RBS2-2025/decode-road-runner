@@ -2,17 +2,29 @@ package org.firstinspires.ftc.teamcode.Movement;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 public class ActionManaging {
 //    Servo lifting;
-    public DcMotor Turret_S,Turret_R , IntakeDc;
+    public DcMotor Turret_R , IntakeDc;
+    public DcMotorEx Turret_S;
+    private static final double PREHEAT_VELOCITY = 1000;
+    private static final double SHOOT_VELOCITY   = 2000;
+    private double currentTargetVelocity = 0;
 
+    private static final double P = 270;
+    private static final double I = 0.0;
+    private static final double D = 0.0;
+    private static final double BASE_F = 17.6;
 
-    public ActionManaging(DcMotor Turret_S, DcMotor Turret_R, DcMotor IntakeDc) {
+    private static final double NOMINAL_VOLTAGE = 12.0;
+
+    public ActionManaging(DcMotorEx Turret_S, DcMotor Turret_R, DcMotor IntakeDc) {
         this.Turret_S = Turret_S;
         this.Turret_R = Turret_R;
         this.IntakeDc = IntakeDc;
@@ -29,10 +41,27 @@ public class ActionManaging {
         IntakeDc.setPower(-1);
     }
 
+    public void updateFlywheelPIDF(double batteryVoltage) {
+        double compensatedF = BASE_F * (NOMINAL_VOLTAGE / batteryVoltage);
+
+        PIDFCoefficients pidf = new PIDFCoefficients(
+                P, I, D, compensatedF
+        );
 
 
-    public void outtake(double power){
-        Turret_S.setPower(power);
+
+        Turret_S.setPIDFCoefficients(
+                DcMotor.RunMode.RUN_USING_ENCODER,
+                pidf
+        );
+    }
+    public void preheat() {
+        currentTargetVelocity = PREHEAT_VELOCITY;
+        Turret_S.setVelocity(currentTargetVelocity);
+    }
+    public void outtake() {
+        currentTargetVelocity = SHOOT_VELOCITY;
+        Turret_S.setVelocity(SHOOT_VELOCITY);
     }
 
     public void outtake_stop(){
