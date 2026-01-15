@@ -116,27 +116,7 @@ public class TeleOpMain extends LinearOpMode {
         }
     }
 
-    /**
-     * 아웃테이크
-     */
-    /**
-     void outtake(){
-     // outtake (gamepad2.b)
-     if (gamepad2.b) {
-     action.intake(1);
-     action.outtake();
-     Out_wasPressed = true;
-     }
 
-     if (!gamepad2.b && Out_wasPressed) {
-     action.outtake_stop();
-     Out_wasPressed = false;
-     action.preheat();
-     }
-     if (gamepad2.y){
-     action.preheat();
-     }
-     } **/
     void outtake(){
         // outtake (gamepad2.b)
         if (gamepad2.b) {
