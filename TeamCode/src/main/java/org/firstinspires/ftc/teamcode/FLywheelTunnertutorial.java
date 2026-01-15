@@ -16,11 +16,11 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 public class FLywheelTunnertutorial extends OpMode {
     public DcMotorEx Turret_S;
     double highvelocity = 2000;
-    double lowvelocity  = 1500;
+    double lowvelocity  = 1000;
 
-    double curTargetVelocity = highvelocity;
-    double F = 0; //15.5
-    double P = 0;
+    double curTargetVelocity = lowvelocity;
+    double F = 17.7; //15.5
+    double P = 300;
     double nominalVoltage = 12.0;
     double[] stepSizes = {10.0, 1.0, 0.1, 0.001};
 

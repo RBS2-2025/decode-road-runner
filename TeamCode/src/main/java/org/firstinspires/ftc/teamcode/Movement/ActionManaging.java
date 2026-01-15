@@ -13,11 +13,11 @@ public class ActionManaging {
 //    Servo lifting;
     public DcMotor Turret_R , IntakeDc;
     public DcMotorEx Turret_S;
-    private static final double PREHEAT_VELOCITY = 1500;
+    private static final double PREHEAT_VELOCITY = 1000;
     private static final double SHOOT_VELOCITY   = 2000;
     private double currentTargetVelocity = 0;
 
-    private static final double P = 0.024;
+    private static final double P = 270;
     private static final double I = 0.0;
     private static final double D = 0.0;
     private static final double BASE_F = 17.6;
@@ -47,6 +47,8 @@ public class ActionManaging {
         PIDFCoefficients pidf = new PIDFCoefficients(
                 P, I, D, compensatedF
         );
+
+
 
         Turret_S.setPIDFCoefficients(
                 DcMotor.RunMode.RUN_USING_ENCODER,
